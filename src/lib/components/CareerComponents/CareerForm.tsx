@@ -114,7 +114,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     const savingCareerRef = useRef(false);
 
     const isFormValid = () => {
-        return jobTitle?.trim().length > 0 && description?.trim().length > 0 && questions.some((q) => q.questions.length > 0) && workSetup?.trim().length > 0;
+        return jobTitle?.trim().length > 0 && description?.trim().length > 0 && workSetup?.trim().length > 0;
     }
 
     const updateCareer = async (status: string) => {
@@ -276,18 +276,18 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
               <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px" }}>
                   <button
                   disabled={!isFormValid() || isSavingCareer}
-                   style={{ width: "fit-content", color: "#414651", background: "#fff", border: "1px solid #D5D7DA", padding: "10px 16px", borderRadius: "60px", cursor: !isFormValid() || isSavingCareer ? "not-allowed" : "pointer", whiteSpace: "nowrap", fontWeight: 700, fontSize: 14 }} onClick={() => {
+                   style={{ width: "fit-content", color: !isFormValid() || isSavingCareer ? "#D5D7DA" : "#414651", background: "#fff", border: "1px solid #D5D7DA", padding: "10px 16px", borderRadius: "60px", cursor: !isFormValid() || isSavingCareer ? "not-allowed" : "pointer", whiteSpace: "nowrap", fontWeight: 700, fontSize: 14 }} onClick={() => {
                     confirmSaveCareer("inactive");
                       }}>
                           Save as Unpublished
                   </button>
                   <button 
                   disabled={!isFormValid() || isSavingCareer}
-                  style={{ width: "fit-content", background: !isFormValid() || isSavingCareer ? "#D5D7DA" : "black", color: "#fff", border: "1px solid #E9EAEB", padding: "8px 16px", borderRadius: "60px", cursor: !isFormValid() || isSavingCareer ? "not-allowed" : "pointer", whiteSpace: "nowrap"}} onClick={() => {
+                  style={{ width: "fit-content", background: !isFormValid() || isSavingCareer ? "#D5D7DA" : "black", color: "#fff", border: "1px solid #E9EAEB", padding: "8px 16px", borderRadius: "60px", cursor: !isFormValid() || isSavingCareer ? "not-allowed" : "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 8 }} onClick={() => {
                     confirmSaveCareer("active");
                   }}>
-                    <i className="la la-check-circle" style={{ color: "#fff", fontSize: 20, marginRight: 8 }}></i>
-                      Save as Published
+                      <span style={{ display: "flex", alignItems: "center" }}>Save and Continue</span>
+                    <i className="la la-arrow-right" style={{ color: "#fff", fontSize: 20 }}></i>
                   </button>
                 </div>
         </div>) : (
@@ -305,21 +305,21 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                    style={{ width: "fit-content", color: "#414651", background: "#fff", border: "1px solid #D5D7DA", padding: "8px 16px", borderRadius: "60px", cursor: !isFormValid() || isSavingCareer ? "not-allowed" : "pointer", whiteSpace: "nowrap" }} onClick={() => {
                     updateCareer("inactive");
                     }}>
-                          Save Changes as Unpublished
+                          Save as Unpublished
                   </button>
                   <button 
                   disabled={!isFormValid() || isSavingCareer}
-                  style={{ width: "fit-content", background: !isFormValid() || isSavingCareer ? "#D5D7DA" : "black", color: "#fff", border: "1px solid #E9EAEB", padding: "8px 16px", borderRadius: "60px", cursor: !isFormValid() || isSavingCareer ? "not-allowed" : "pointer", whiteSpace: "nowrap"}} onClick={() => {
+                  style={{ width: "fit-content", background: !isFormValid() || isSavingCareer ? "#D5D7DA" : "black", color: "#fff", border: "1px solid #E9EAEB", padding: "8px 16px", borderRadius: "60px", cursor: !isFormValid() || isSavingCareer ? "not-allowed" : "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 8 }} onClick={() => {
                     updateCareer("active");
                   }}>
-                    <i className="la la-check-circle" style={{ color: "#fff", fontSize: 20, marginRight: 8 }}></i>
-                      Save Changes as Published
+                        <span style={{ display: "flex", alignItems: "center" }}>Save and Continue</span>
+                        <i className="la la-arrow-right" style={{ color: "#fff", fontSize: 20 }}></i>
                   </button>
               </div>
        </div>
         )}
         <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%", gap: 16, alignItems: "flex-start", marginTop: 16 }}>
-        <div style={{ width: "70%", display: "flex", flexDirection: "column", gap: 24 }}>
+        <div style={{ width: "70%", display: "flex", flexDirection: "column", gap: 8 }}>
               <div className="layered-card-middle">
               <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
                       <span style={{fontSize: 16, color: "#181D27", fontWeight: 700, padding: "4px 12px"}}>1. Career Information</span>
@@ -627,10 +627,10 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                     <path d="M4.58333 16.6667H7.91667C7.91667 17.5833 7.16667 18.3333 6.25 18.3333C5.33333 18.3333 4.58333 17.5833 4.58333 16.6667ZM2.91667 15.8333H9.58333V14.1667H2.91667V15.8333ZM12.5 7.91667C12.5 11.1 10.2833 12.8 9.35833 13.3333H3.14167C2.21667 12.8 0 11.1 0 7.91667C0 4.46667 2.8 1.66667 6.25 1.66667C9.7 1.66667 12.5 4.46667 12.5 7.91667ZM10.8333 7.91667C10.8333 5.39167 8.775 3.33333 6.25 3.33333C3.725 3.33333 1.66667 5.39167 1.66667 7.91667C1.66667 9.975 2.90833 11.1583 3.625 11.6667H8.875C9.59167 11.1583 10.8333 9.975 10.8333 7.91667ZM16.5583 6.14167L15.4167 6.66667L16.5583 7.19167L17.0833 8.33333L17.6083 7.19167L18.75 6.66667L17.6083 6.14167L17.0833 5L16.5583 6.14167ZM14.5833 5L15.3667 3.28333L17.0833 2.5L15.3667 1.71667L14.5833 0L13.8 1.71667L12.0833 2.5L13.8 3.28333L14.5833 5Z" fill="url(#paint0_linear_310_3980)" />
                     <defs>
                       <linearGradient id="paint0_linear_310_3980" x1="-0.000291994" y1="18.3332" x2="18.3285" y2="-0.412159" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#FCCEC0" />
-                        <stop offset="0.33" stop-color="#EBACC9" />
-                        <stop offset="0.66" stop-color="#CEB6DA" />
-                        <stop offset="1" stop-color="#9FCAED" />
+                        <stop stopColor="#FCCEC0" />
+                        <stop offset="0.33" stopColor="#EBACC9" />
+                        <stop offset="0.66" stopColor="#CEB6DA" />
+                        <stop offset="1" stopColor="#9FCAED" />
                       </linearGradient>
                     </defs>
                   </svg>
