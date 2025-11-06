@@ -46,6 +46,13 @@ const employmentTypeOptions = [
     },
 ];
 
+const teamRoleOptions = [
+    { name: "Job Owner" },
+    { name: "Hiring Manager" },
+    { name: "Recruiter" },
+    { name: "Viewer" },
+];
+
 const countryOptions = [
     {
         name: "Philippines",
@@ -99,6 +106,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     const [country, setCountry] = useState(career?.country || "Philippines");
     const [province, setProvince] = useState(career?.province ||"");
     const [city, setCity] = useState(career?.location || "");
+    const [teamMembers, setTeamMembers] = useState<any[]>([]);
     const [provinceList, setProvinceList] = useState([]);
     const [cityList, setCityList] = useState([]);
     const [showSaveModal, setShowSaveModal] = useState("");
@@ -246,6 +254,20 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         }
         parseProvinces();
       },[career])
+
+      useEffect(() => {
+        if (user && teamMembers.length === 0) {
+          setTeamMembers([
+            {
+              name: user.name,
+              email: user.email,
+              image: user.image,
+              role: "Job Owner",
+              isYou: true,
+            },
+          ]);
+        }
+      }, [user]);
 
     return (
         <div className="col">
@@ -540,7 +562,61 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                   </div>
               </div>
 
-          <InterviewQuestionGeneratorV2 questions={questions} setQuestions={(questions) => setQuestions(questions)} jobTitle={jobTitle} description={description} />
+          {/* <InterviewQuestionGeneratorV2 questions={questions} setQuestions={(questions) => setQuestions(questions)} jobTitle={jobTitle} description={description} /> */}
+
+          <div className="layered-card-middle">
+              <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
+                      <span style={{fontSize: 16, color: "#181D27", fontWeight: 700, padding: "4px 12px"}}>3. Team Access</span>
+                  </div>
+                  <div className="layered-card-content" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+                          <div style={{ display: "flex", flexDirection: "column" }}>
+                              <span style={{ fontSize: 14, fontWeight: 700, color: "#181D27" }}>Add more members</span>
+                              <span style={{ fontSize: 12, color: "#667085" }}>You can add other members to collaborate on this career.</span>
+                          </div>
+                          <button type="button" className="button-primary-v2" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8, background: "#FFFFFF", color: "#181D27", border: "1px solid #E9EAEB", padding: "8px 14px", borderRadius: 10 }}>
+                              <i className="la la-user" style={{ fontSize: 18, color: "#717680", display: "flex", alignItems: "center" }}></i>
+                              <span style={{ fontWeight: 500, fontSize: 16, color: "#717680", display: "flex", alignItems: "center", lineHeight: 1 }}>Add member</span>
+                              <i className="la la-angle-down" style={{ fontSize: 16, color: "#717680", display: "flex", alignItems: "center" }}></i>
+                          </button>
+                      </div>
+
+                      {teamMembers.map((member, idx) => (
+                        <div key={idx} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12, paddingTop: 8 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                                <img src={member.image || "/images/user-avatar-placeholder.png"} alt={member.name} style={{ width: 36, height: 36, borderRadius: "50%", objectFit: "cover" }} />
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <span style={{ fontSize: 14, color: "#181D27", fontWeight: 600 }}>{member.name} {member.isYou && <span style={{ color: "#667085" }}>(You)</span>}</span>
+                                    <span style={{ fontSize: 12, color: "#667085" }}>{member.email}</span>
+                                </div>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <div style={{ minWidth: 180 }}>
+                                    <CustomDropdown
+                                      onSelectSetting={(role) => {
+                                        const next = [...teamMembers];
+                                        next[idx] = { ...next[idx], role };
+                                        setTeamMembers(next);
+                                      }}
+                                      screeningSetting={member.role}
+                                      settingList={teamRoleOptions}
+                                      placeholder="Select role"
+                                    />
+                                </div>
+                                <button type="button" disabled={member.isYou} onClick={() => {
+                                    if (member.isYou) return;
+                                    setTeamMembers(teamMembers.filter((_, i) => i !== idx));
+                                }}
+                                  style={{ width: 44, height: 44, borderRadius: "50%", border: "1px solid #E9EAEB", background: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", cursor: member.isYou ? "not-allowed" : "pointer", color: member.isYou ? "#98A2B3" : "#667085" }}>
+                                    <i className="la la-trash" style={{ fontSize: 20 }}></i>
+                                </button>
+                            </div>
+                        </div>
+                      ))}
+
+                      <span style={{ fontSize: 12, color: "#98A2B3" }}>*Admins can view all careers regardless of specific access settings.</span>
+                  </div>
+              </div>
         </div>
 
         <div style={{ width: "40%", display: "flex", flexDirection: "column", gap: 8 }}>
