@@ -334,8 +334,22 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                       <span style={{fontSize: 14, color: "#414651", fontWeight: 500}}>Job Title</span>
                       <input
                       value={jobTitle}
-                      style={{border: "1px solid #E9EAEB"}}
-                      className="form-control"
+                      style={{
+                          border: "1px solid #E9EAEB",
+                          borderRadius: "5px",
+                          color: "#333",
+                          fontSize: "1rem",
+                          width: "100%",
+                          padding: "8px 12px",
+                          outline: "none"
+                      }}
+                      onFocus={(e) => {
+                          e.target.style.border = "1px solid #E9EAEB";
+                          e.target.style.boxShadow = "none";
+                      }}
+                      onBlur={(e) => {
+                          e.target.style.border = "1px solid #E9EAEB";
+                      }}
                       placeholder="Enter job title"
                       onChange={(e) => {
                           setJobTitle(e.target.value || "");
@@ -441,8 +455,25 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                                   </span>
                                   <input
                                     type="number"
-                                    className="form-control"
-                                    style={{ paddingLeft: "28px", paddingRight: "60px" }}
+                                    style={{
+                                      border: "1px solid #E9EAEB",
+                                      borderRadius: "5px",
+                                      color: "#333",
+                                      fontSize: "1rem",
+                                      width: "100%",
+                                      paddingLeft: "28px",
+                                      paddingRight: "60px",
+                                      paddingTop: "8px",
+                                      paddingBottom: "8px",
+                                      outline: "none"
+                                    }}
+                                    onFocus={(e) => {
+                                      e.target.style.border = "1px solid #E9EAEB";
+                                      e.target.style.boxShadow = "none";
+                                    }}
+                                    onBlur={(e) => {
+                                      e.target.style.border = "1px solid #E9EAEB";
+                                    }}
                                     placeholder="0"
                                     min={0}
                                     value={minimumSalary}
@@ -483,8 +514,25 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                                   </span>
                                   <input
                                     type="number"
-                                    className="form-control"
-                                    style={{ paddingLeft: "28px", paddingRight: "60px" }}
+                                    style={{
+                                      border: "1px solid #E9EAEB",
+                                      borderRadius: "5px",
+                                      color: "#333",
+                                      fontSize: "1rem",
+                                      width: "100%",
+                                      paddingLeft: "28px",
+                                      paddingRight: "60px",
+                                      paddingTop: "8px",
+                                      paddingBottom: "8px",
+                                      outline: "none"
+                                    }}
+                                    onFocus={(e) => {
+                                      e.target.style.border = "1px solid #E9EAEB";
+                                      e.target.style.boxShadow = "none";
+                                    }}
+                                    onBlur={(e) => {
+                                      e.target.style.border = "1px solid #E9EAEB";
+                                    }}
                                     placeholder="0"
                                     min={0}
                                     value={maximumSalary}
