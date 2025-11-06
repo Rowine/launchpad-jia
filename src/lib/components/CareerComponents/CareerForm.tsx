@@ -319,7 +319,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
        </div>
         )}
         <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%", gap: 16, alignItems: "flex-start", marginTop: 16 }}>
-        <div style={{ width: "60%", display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ width: "70%", display: "flex", flexDirection: "column", gap: 24 }}>
               <div className="layered-card-middle">
               <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
                       <span style={{fontSize: 16, color: "#181D27", fontWeight: 700, padding: "4px 12px"}}>1. Career Information</span>
@@ -619,46 +619,42 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
               </div>
         </div>
 
-        <div style={{ width: "40%", display: "flex", flexDirection: "column", gap: 8 }}>
-        <div className="layered-card-outer">
+        <div style={{ width: "30%", display: "flex", flexDirection: "column", gap: 8 }}>
               <div className="layered-card-middle">
-              <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
-                  <div style={{ width: 32, height: 32, backgroundColor: "#181D27", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <i className="la la-cog" style={{ color: "#FFFFFF", fontSize: 20 }}></i>
+              <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 4 }}>
+                  <div style={{ width: 32, height: 32,display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.58333 16.6667H7.91667C7.91667 17.5833 7.16667 18.3333 6.25 18.3333C5.33333 18.3333 4.58333 17.5833 4.58333 16.6667ZM2.91667 15.8333H9.58333V14.1667H2.91667V15.8333ZM12.5 7.91667C12.5 11.1 10.2833 12.8 9.35833 13.3333H3.14167C2.21667 12.8 0 11.1 0 7.91667C0 4.46667 2.8 1.66667 6.25 1.66667C9.7 1.66667 12.5 4.46667 12.5 7.91667ZM10.8333 7.91667C10.8333 5.39167 8.775 3.33333 6.25 3.33333C3.725 3.33333 1.66667 5.39167 1.66667 7.91667C1.66667 9.975 2.90833 11.1583 3.625 11.6667H8.875C9.59167 11.1583 10.8333 9.975 10.8333 7.91667ZM16.5583 6.14167L15.4167 6.66667L16.5583 7.19167L17.0833 8.33333L17.6083 7.19167L18.75 6.66667L17.6083 6.14167L17.0833 5L16.5583 6.14167ZM14.5833 5L15.3667 3.28333L17.0833 2.5L15.3667 1.71667L14.5833 0L13.8 1.71667L12.0833 2.5L13.8 3.28333L14.5833 5Z" fill="url(#paint0_linear_310_3980)" />
+                    <defs>
+                      <linearGradient id="paint0_linear_310_3980" x1="-0.000291994" y1="18.3332" x2="18.3285" y2="-0.412159" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#FCCEC0" />
+                        <stop offset="0.33" stop-color="#EBACC9" />
+                        <stop offset="0.66" stop-color="#CEB6DA" />
+                        <stop offset="1" stop-color="#9FCAED" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
                   </div>
-                      <span style={{fontSize: 16, color: "#181D27", fontWeight: 700}}>Settings</span>
+                      <span style={{fontSize: 16, color: "#181D27", fontWeight: 700}}>Tips</span>
                   </div>
-                  <div className="layered-card-content">
-                      <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
-                         <i className="la la-id-badge" style={{ color: "#414651", fontSize: 20 }}></i>
-                         <span>Screening Setting</span>
-                      </div>
-                      <CustomDropdown
-                      onSelectSetting={(setting) => {
-                          setScreeningSetting(setting);
-                      }}
-                      screeningSetting={screeningSetting}
-                      settingList={screeningSettingList}
-                      />
-                      <span>This settings allows Jia to automatically endorse candidates who meet the chosen criteria.</span>
-                      <div style={{ display: "flex", flexDirection: "row",justifyContent: "space-between", gap: 8 }}>
-                          <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
-                              <i className="la la-video" style={{ color: "#414651", fontSize: 20 }}></i>
-                              <span>Require Video Interview</span>
-                          </div>
-                          <div style={{ display: "flex", flexDirection: "row", alignItems: "flex-start", gap: 8 }}>
-                              <label className="switch">
-                                  <input type="checkbox" checked={requireVideo} onChange={() => setRequireVideo(!requireVideo)} />
-                                  <span className="slider round"></span>
-                              </label>
-                              <span>{requireVideo ? "Yes" : "No"}</span>
-                          </div>
+                  <div className="layered-card-content" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                      <div style={{ background: "#FFFFFF", border: "1px solid #F2F4F7", borderRadius: 12, padding: 16 }}>
+                          <p style={{ margin: 0, color: "#181D27" }}>
+                              <span style={{ fontWeight: 700, fontSize: 14 }}>Use clear, standard job titles</span>
+                              <span style={{ fontWeight: 500, color: "#717680", fontSize: 14 }}> for better searchability (e.g., “Software Engineer” instead of “Code Ninja” or “Tech Rockstar”).</span>
+                          </p>
+                          <p style={{ margin: "12px 0 0 0", color: "#181D27" }}>
+                              <span style={{ fontWeight: 700, fontSize: 14 }}>Avoid abbreviations</span>
+                              <span style={{ fontWeight: 500, color: "#717680", fontSize: 14 }}> or internal role codes that applicants may not understand (e.g., use “QA Engineer” instead of “QE II” or “QA‑TL”).</span>
+                          </p>
+                          <p style={{ margin: "12px 0 0 0", color: "#181D27" }}>
+                              <span style={{ fontWeight: 700, fontSize: 14 }}>Keep it concise</span>
+                              <span style={{ fontWeight: 500, color: "#717680", fontSize: 14 }}> — job titles should be no more than a few words (2—4 max), avoiding fluff or marketing terms.</span>
+                          </p>
                       </div>
                   </div>
               </div>
           </div>
-
-        </div>
       </div>
       {showSaveModal && (
          <CareerActionModal action={showSaveModal} onAction={(action) => saveCareer(action)} />
