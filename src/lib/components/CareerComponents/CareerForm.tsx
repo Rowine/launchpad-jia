@@ -50,33 +50,6 @@ const countryOptions = [
     {
         name: "Philippines",
     },
-    {
-        name: "United States",
-    },
-    {
-        name: "United Kingdom",
-    },
-    {
-        name: "Canada",
-    },
-    {
-        name: "Australia",
-    },
-    {
-        name: "Singapore",
-    },
-    {
-        name: "Japan",
-    },
-    {
-        name: "South Korea",
-    },
-    {
-        name: "India",
-    },
-    {
-        name: "Malaysia",
-    },
 ];
 
 export default function CareerForm({ career, formType, setShowEditModal }: { career?: any, formType: string, setShowEditModal?: (show: boolean) => void }) {
