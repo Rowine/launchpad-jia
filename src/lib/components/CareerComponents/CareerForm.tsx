@@ -330,7 +330,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                       <span style={{fontSize: 16, color: "#181D27", fontWeight: 700, padding: "4px 12px"}}>1. Career Information</span>
                   </div>
                   <div className="layered-card-content">
-                      <span style={{fontSize: 14, color: "#181D27", fontWeight: 700}}>Basic Information</span>
+                      <span style={{fontSize: 14, color: "#181D27", fontWeight: 700, display: "block"}}>Basic Information</span>
                       <span style={{fontSize: 14, color: "#414651", fontWeight: 500}}>Job Title</span>
                       <input
                       value={jobTitle}
@@ -358,7 +358,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                       {/* <span>Description</span>
                       <RichTextEditor setText={setDescription} text={description} /> */}
                       
-                      <span style={{fontSize: 14, color: "#181D27", fontWeight: 700}}>Work Setting</span>
+                      <span style={{fontSize: 14, color: "#181D27", fontWeight: 700, marginTop: "16px", display: "block"}}>Work Setting</span>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                           <div>
                               <span style={{fontSize: 14, color: "#414651", fontWeight: 500}}>Employment Type</span>
@@ -384,7 +384,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                           </div>
                       </div>
 
-                      <span style={{fontSize: 14, color: "#181D27", fontWeight: 700}}>Location</span>
+                      <span style={{fontSize: 14, color: "#181D27", fontWeight: 700, marginTop: "16px", display: "block"}}>Location</span>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
                           <div>
                               <span style={{fontSize: 14, color: "#414651", fontWeight: 500}}>Country</span>
@@ -425,7 +425,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                           </div>
                       </div>
 
-                      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: "16px" }}>
                           <span style={{fontSize: 14, color: "#181D27", fontWeight: 700}}>Salary</span>
                           <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
                               <label className="switch" style={{ width: "36px", height: "20px", margin: 0, display: "flex", alignItems: "center" }} >
