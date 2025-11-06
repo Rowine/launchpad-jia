@@ -531,6 +531,15 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                   </div>
               </div>
 
+              <div className="layered-card-middle">
+              <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
+                      <span style={{fontSize: 16, color: "#181D27", fontWeight: 700, padding: "4px 12px"}}>2. Job Description</span>
+                  </div>
+                  <div className="layered-card-content">
+                      <RichTextEditor setText={setDescription} text={description} />
+                  </div>
+              </div>
+
           <InterviewQuestionGeneratorV2 questions={questions} setQuestions={(questions) => setQuestions(questions)} jobTitle={jobTitle} description={description} />
         </div>
 
