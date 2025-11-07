@@ -133,6 +133,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     const [isSavingCareer, setIsSavingCareer] = useState(false);
     const savingCareerRef = useRef(false);
     const [detailsErrors, setDetailsErrors] = useState<DetailsErrors>({});
+    const [stepErrorIndex, setStepErrorIndex] = useState<number | null>(null);
 
     const clearErrors = (...fields: (keyof DetailsErrors)[]) => {
         setDetailsErrors((prev) => {
@@ -261,6 +262,12 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     useEffect(() => {
         setProvinceList(philippineCitiesAndProvinces.provinces);
     }, []);
+
+    useEffect(() => {
+        if (Object.keys(detailsErrors).length === 0) {
+            setStepErrorIndex(null);
+        }
+    }, [detailsErrors]);
 
     useEffect(() => {
         if (!provinceList.length) {
@@ -475,25 +482,32 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         const validationErrors = validateDetails();
         setDetailsErrors(validationErrors);
         if (Object.keys(validationErrors).length > 0) {
+          setStepErrorIndex(currentStep - 1);
           return;
         }
       } else if (!isStepValid(currentStep)) {
+        setStepErrorIndex(currentStep - 1);
         return;
       }
       if (currentStep === 1) {
         setDetailsErrors({});
+        setStepErrorIndex(null);
         writeDraft({ jobTitle, description, employmentType, workSetup, country, province, location: city, salaryNegotiable, minimumSalary, maximumSalary }, orgID);
         goToStep(2);
       } else if (currentStep === 2) {
+        setStepErrorIndex(null);
         writeDraft({ screeningSetting, cvSecretPrompt }, orgID);
         goToStep(3);
       } else if (currentStep === 3) {
+        setStepErrorIndex(null);
         writeDraft({ questions, requireVideo, screeningSetting }, orgID);
         goToStep(4);
       } else if (currentStep === 4) {
+        setStepErrorIndex(null);
         writeDraft({ teamMembers }, orgID);
         goToStep(5);
       } else if (currentStep === 5) {
+        setStepErrorIndex(null);
         confirmSaveCareer("active");
         clearDraft(orgID);
       }
@@ -547,7 +561,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
        </div>
         )}
         <div style={{ marginTop: 4, marginBottom: 12 }}>
-            <CareerFormStepper currentStep={currentStep - 1} progressEnabled={isStepValid(currentStep)} />
+            <CareerFormStepper currentStep={currentStep - 1} progressEnabled={isStepValid(currentStep)} errorStepIndex={stepErrorIndex} />
         </div>
         <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%", gap: 16, alignItems: "flex-start", marginTop: 16 }}>
         <div style={{ width: "70%", display: "flex", flexDirection: "column", gap: 8 }}>

@@ -6,6 +6,7 @@ type CareerFormStepperProps = {
     steps?: string[];
     currentStep: number; // 0-based index
     progressEnabled?: boolean; // controls whether progress gradient is shown
+    errorStepIndex?: number | null;
 };
 
 const DEFAULT_STEPS = [
@@ -16,7 +17,7 @@ const DEFAULT_STEPS = [
     "Review Career",
 ];
 
-export default function CareerFormStepper({ steps = DEFAULT_STEPS, currentStep, progressEnabled = true }: CareerFormStepperProps) {
+export default function CareerFormStepper({ steps = DEFAULT_STEPS, currentStep, progressEnabled = true, errorStepIndex = null }: CareerFormStepperProps) {
     const safeCurrent = Math.min(Math.max(currentStep, 0), steps.length - 1);
 
     return (
@@ -26,11 +27,24 @@ export default function CareerFormStepper({ steps = DEFAULT_STEPS, currentStep, 
                 {steps.map((label, index) => {
                     const isActive = index === safeCurrent;
                     const isCompleted = index < safeCurrent;
+                    const hasError = errorStepIndex === index;
                     const align = index === 0 ? "flex-start" : "flex-start"
                     return (
                         <div key={`step-${index}`} style={{ display: "flex", flexDirection: "column", alignItems: index === 0 ? "flex-start" : index === steps.length - 1 ? "flex-start" : "center", marginRight: 12 }}>
                             <div style={{ display: "flex", alignItems: "center", width: "100%", height: 24, justifyContent: align }}>
-                                {isCompleted ? (
+                                {hasError ? (
+                                    <div
+                                        style={{
+                                            width: 20,
+                                            height: 20,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                        }}
+                                    >
+                                        <i className="la la-exclamation-triangle" style={{ fontSize: 24, color: "#F04438" }}></i>
+                                    </div>
+                                ) : isCompleted ? (
                                     <div
                                         style={{
                                             width: 20,
@@ -80,7 +94,7 @@ export default function CareerFormStepper({ steps = DEFAULT_STEPS, currentStep, 
                                     style={{
                                         fontSize: 14,
                                         color: isActive ? "#181D27" : isCompleted ? "#181D27" : "#98A2B3",
-                                        fontWeight: isActive ? 700 : isCompleted ? 700 : 500,
+                                        fontWeight: hasError ? 700 : isActive ? 700 : isCompleted ? 700 : 500,
                                     }}
                                     title={label}
                                 >
