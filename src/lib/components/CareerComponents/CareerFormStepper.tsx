@@ -25,11 +25,29 @@ export default function CareerFormStepper({ steps = DEFAULT_STEPS, currentStep, 
             <div style={{ display: "grid", gridTemplateColumns: `repeat(${steps.length}, 1fr)` }}>
                 {steps.map((label, index) => {
                     const isActive = index === safeCurrent;
+                    const isCompleted = index < safeCurrent;
                     const align = index === 0 ? "flex-start" : "flex-start"
                     return (
                         <div key={`step-${index}`} style={{ display: "flex", flexDirection: "column", alignItems: index === 0 ? "flex-start" : index === steps.length - 1 ? "flex-start" : "center", marginRight: 12 }}>
-                            <div style={{ display: "flex", alignItems: "center", width: "100%", height: 20, justifyContent: align }}>
-                                <i className="la la-dot-circle" style={{ fontSize: 20, color: isActive ? "#000000" : "#D5D7DA" }}></i>
+                            <div style={{ display: "flex", alignItems: "center", width: "100%", height: 24, justifyContent: align }}>
+                                {isCompleted ? (
+                                    <div
+                                        style={{
+                                            width: 20,
+                                            height: 20,
+                                            borderRadius: "50%",
+                                            backgroundColor: "#000000",
+                                            border: "2px solid #000000",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                        }}
+                                    >
+                                        <i className="la la-check" style={{ fontSize: 10, color: "#FFFFFF" }}></i>
+                                    </div>
+                                ) : (
+                                    <i className="la la-dot-circle" style={{ fontSize: 24, color: isActive ? "#000000" : "#D5D7DA" }}></i>
+                                )}
                                 {index < steps.length - 1 && (() => {
                                     const computedPct = index < safeCurrent ? 100 : index === safeCurrent ? 50 : 0;
                                     const fillPct = progressEnabled ? computedPct : 0;
@@ -61,8 +79,8 @@ export default function CareerFormStepper({ steps = DEFAULT_STEPS, currentStep, 
                                 <span
                                     style={{
                                         fontSize: 14,
-                                        color: isActive ? "#101828" : "#98A2B3",
-                                        fontWeight: isActive ? 700 : 500,
+                                        color: isActive ? "#181D27" : isCompleted ? "#181D27" : "#98A2B3",
+                                        fontWeight: isActive ? 700 : isCompleted ? 700 : 500,
                                     }}
                                     title={label}
                                 >
