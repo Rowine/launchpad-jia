@@ -296,7 +296,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     }
 
   // Step handling
-  const currentStep = typeof window !== "undefined" ? getStepFromUrl(1) : 1;
+  const [currentStep, setCurrentStep] = useState<number>(() => (typeof window !== "undefined" ? getStepFromUrl(1) : 1));
 
   const isStepValid = (step: number) => {
       switch (step) {
@@ -315,7 +315,24 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
       }
   }
 
-  const goToStep = (next: number) => setStepInUrl(Math.min(Math.max(next, 1), 5));
+  const goToStep = (next: number) => {
+    const safeStep = Math.min(Math.max(next, 1), 5);
+    setCurrentStep(safeStep);
+    setStepInUrl(safeStep);
+  };
+
+  useEffect(() => {
+    const updateStepFromUrl = () => {
+      setCurrentStep(getStepFromUrl(1));
+    };
+
+    updateStepFromUrl();
+
+    window.addEventListener("popstate", updateStepFromUrl);
+    return () => {
+      window.removeEventListener("popstate", updateStepFromUrl);
+    };
+  }, []);
 
     
 

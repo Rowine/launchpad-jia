@@ -13,7 +13,7 @@ export function setStepInUrl(step: number) {
     if (typeof window === "undefined") return;
     const url = new URL(window.location.href);
     url.searchParams.set("step", String(step));
-    window.location.href = url.toString();
+    window.history.replaceState(null, "", url.toString());
 }
 
 export function getDraftKey(orgID?: string | null) {
