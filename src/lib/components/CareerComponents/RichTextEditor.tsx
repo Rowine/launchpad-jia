@@ -57,10 +57,14 @@ export default function RichTextEditor({setText, text}) {
   
   
       useEffect(() => {
-        if (descriptionEditorRef.current && !descriptionEditorRef.current.innerHTML && text) {
-          descriptionEditorRef.current.innerHTML = text;
+        const editor = descriptionEditorRef.current as any;
+        if (!editor) return;
+        const current = editor.innerHTML || "";
+        const next = text || "";
+        if (current !== next) {
+          editor.innerHTML = next;
         }
-      }, []);
+      }, [text]);
 
       return (
         <>
