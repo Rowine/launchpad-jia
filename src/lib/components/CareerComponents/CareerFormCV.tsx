@@ -186,12 +186,14 @@ export default function CareerFormCV({ jobTitle, screeningSetting, setScreeningS
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                         <span style={{ fontSize: 16, color: "#181D27", fontWeight: 700, display: "block" }}>CV Screening</span>
                         <span style={{ fontSize: 16, color: "#414651", fontWeight: 500 }}>Jia automatically endorses candidates who meet the chosen criteria.</span>
-                        <CustomDropdown
-                            onSelectSetting={setScreeningSetting}
-                            screeningSetting={screeningSetting}
-                            settingList={screeningSettingList}
-                            placeholder="Choose screening setting"
-                        />
+                        <div style={{ width: "40%" }}>
+                            <CustomDropdown
+                                onSelectSetting={setScreeningSetting}
+                                screeningSetting={screeningSetting}
+                                settingList={screeningSettingList}
+                                placeholder="Choose screening setting"
+                            />
+                        </div>
                           <div style={{ borderBottom: "2px solid #E9EAEB", width: "100%", padding: "12px 0" }}></div>
                     </div>
                   
