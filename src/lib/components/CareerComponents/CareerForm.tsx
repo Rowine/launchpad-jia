@@ -86,7 +86,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     const [workSetupRemarks, setWorkSetupRemarks] = useState(career?.workSetupRemarks || "");
     const [screeningSetting, setScreeningSetting] = useState(career?.screeningSetting || "Good Fit and above");
     const [cvSecretPrompt, setCvSecretPrompt] = useState(career?.cvSecretPrompt || "");
-    const [employmentType, setEmploymentType] = useState(career?.employmentType || "Full-Time");
+    const [employmentType, setEmploymentType] = useState(career?.employmentType || "");
     const [requireVideo, setRequireVideo] = useState(career?.requireVideo || true);
     const [salaryNegotiable, setSalaryNegotiable] = useState(career?.salaryNegotiable || true);
     const [minimumSalary, setMinimumSalary] = useState(career?.minimumSalary || "");
@@ -210,18 +210,16 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             }
         }
         if (typeof next.province !== "undefined") {
-            const provinceValue = next.province as string;
+            const provinceValue = (next.province as string) || "";
             setProvince(provinceValue);
             if (provinceValue.trim()) {
                 clearErrors("province");
             }
-            const provinceObj: any = provinceList.find((p: any) => p.name === provinceValue);
-            const cities: any[] = philippineCitiesAndProvinces.cities.filter((c: any) => c.province === (provinceObj?.key || ""));
-            setCityList(cities);
-            const defaultCity = cities[0]?.name || "";
-            setCity(defaultCity);
-            if (defaultCity) {
-                clearErrors("city");
+            if (!provinceValue.trim()) {
+                setCityList([]);
+                if (city) {
+                    setCity("");
+                }
             }
         }
         if (typeof next.city !== "undefined") {
@@ -259,6 +257,32 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             clearErrors("description");
         }
     };
+
+    useEffect(() => {
+        setProvinceList(philippineCitiesAndProvinces.provinces);
+    }, []);
+
+    useEffect(() => {
+        if (!provinceList.length) {
+            return;
+        }
+
+        if (province && province.trim()) {
+            const provinceObj: any = provinceList.find((p: any) => p.name === province);
+            const cities: any[] = philippineCitiesAndProvinces.cities.filter((c: any) => c.province === (provinceObj?.key || ""));
+            setCityList(cities);
+
+            const cityInList = cities.some((c: any) => c.name === city);
+            if (!cityInList && city) {
+                setCity("");
+            }
+        } else {
+            setCityList([]);
+            if (city) {
+                setCity("");
+            }
+        }
+    }, [province, provinceList, city]);
 
     const isFormValid = () => {
         return jobTitle?.trim().length > 0 && description?.trim().length > 0 && workSetup?.trim().length > 0;
@@ -411,22 +435,6 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         }
       }
     }
-
-    useEffect(() => {
-        const parseProvinces = () => {
-          setProvinceList(philippineCitiesAndProvinces.provinces);
-          const defaultProvince = philippineCitiesAndProvinces.provinces[0];
-          if (!career?.province) {
-            setProvince(defaultProvince.name);
-          }
-          const cities = philippineCitiesAndProvinces.cities.filter((city) => city.province === defaultProvince.key);
-          setCityList(cities);
-          if (!career?.location) {
-            setCity(cities[0].name);
-          }
-        }
-        parseProvinces();
-      },[career])
 
       useEffect(() => {
         // Rehydrate from draft

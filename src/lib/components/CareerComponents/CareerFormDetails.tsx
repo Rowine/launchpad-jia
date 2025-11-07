@@ -137,7 +137,7 @@ export default function CareerFormDetails(props: Props) {
                                 onSelectSetting={(province) => onChange({ province })}
                                 screeningSetting={value.province}
                                 settingList={provinceList}
-                                placeholder="Choose state / province"
+                                placeholder="Choose state/province"
                                 error={!!errors.province}
                             />
                             {renderErrorText("province")}
