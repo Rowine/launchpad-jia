@@ -66,6 +66,18 @@ const countryOptions = [
     },
 ];
 
+type DetailsErrors = {
+    jobTitle?: string;
+    employmentType?: string;
+    workSetup?: string;
+    country?: string;
+    province?: string;
+    city?: string;
+    minimumSalary?: string;
+    maximumSalary?: string;
+    description?: string;
+};
+
 export default function CareerForm({ career, formType, setShowEditModal }: { career?: any, formType: string, setShowEditModal?: (show: boolean) => void }) {
     const { user, orgID } = useAppContext();
     const [jobTitle, setJobTitle] = useState(career?.jobTitle || "");
@@ -120,6 +132,133 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     const [showSaveModal, setShowSaveModal] = useState("");
     const [isSavingCareer, setIsSavingCareer] = useState(false);
     const savingCareerRef = useRef(false);
+    const [detailsErrors, setDetailsErrors] = useState<DetailsErrors>({});
+
+    const clearErrors = (...fields: (keyof DetailsErrors)[]) => {
+        setDetailsErrors((prev) => {
+            if (!prev || Object.keys(prev).length === 0) {
+                return prev;
+            }
+            const next = { ...prev };
+            fields.forEach((field) => {
+                delete next[field];
+            });
+            return next;
+        });
+    };
+
+    const stripHtml = (value: string) => value?.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").trim();
+
+    const validateDetails = (): DetailsErrors => {
+        const errors: DetailsErrors = {};
+        if (!jobTitle?.trim()) errors.jobTitle = "This is a required field.";
+        if (!employmentType?.trim()) errors.employmentType = "This is a required field.";
+        if (!workSetup?.trim()) errors.workSetup = "This is a required field.";
+        if (!country?.trim()) errors.country = "This is a required field.";
+        if (!province?.trim()) errors.province = "This is a required field.";
+        if (!city?.trim()) errors.city = "This is a required field.";
+
+        const minimum = String(minimumSalary ?? "").trim();
+        if (!minimum) errors.minimumSalary = "This is a required field.";
+
+        const maximum = String(maximumSalary ?? "").trim();
+        if (!maximum) errors.maximumSalary = "This is a required field.";
+
+        const descriptionText = stripHtml(description || "");
+        if (!descriptionText) errors.description = "This is a required field.";
+
+        return errors;
+    };
+
+    const handleDetailsChange = (next: Partial<{
+        jobTitle: string;
+        employmentType: string;
+        workSetup: string;
+        country: string;
+        province: string;
+        city: string;
+        salaryNegotiable: boolean;
+        minimumSalary: string | number | null;
+        maximumSalary: string | number | null;
+    }>) => {
+        if (typeof next.jobTitle !== "undefined") {
+            const value = (next.jobTitle as string) || "";
+            setJobTitle(value);
+            if (value.trim()) {
+                clearErrors("jobTitle");
+            }
+        }
+        if (typeof next.employmentType !== "undefined") {
+            const value = (next.employmentType as string) || "";
+            setEmploymentType(value);
+            if (value.trim()) {
+                clearErrors("employmentType");
+            }
+        }
+        if (typeof next.workSetup !== "undefined") {
+            const value = (next.workSetup as string) || "";
+            setWorkSetup(value);
+            if (value.trim()) {
+                clearErrors("workSetup");
+            }
+        }
+        if (typeof next.country !== "undefined") {
+            const value = (next.country as string) || "";
+            setCountry(value);
+            if (value.trim()) {
+                clearErrors("country");
+            }
+        }
+        if (typeof next.province !== "undefined") {
+            const provinceValue = next.province as string;
+            setProvince(provinceValue);
+            if (provinceValue.trim()) {
+                clearErrors("province");
+            }
+            const provinceObj: any = provinceList.find((p: any) => p.name === provinceValue);
+            const cities: any[] = philippineCitiesAndProvinces.cities.filter((c: any) => c.province === (provinceObj?.key || ""));
+            setCityList(cities);
+            const defaultCity = cities[0]?.name || "";
+            setCity(defaultCity);
+            if (defaultCity) {
+                clearErrors("city");
+            }
+        }
+        if (typeof next.city !== "undefined") {
+            const value = (next.city as string) || "";
+            setCity(value);
+            if (value.trim()) {
+                clearErrors("city");
+            }
+        }
+        if (typeof next.salaryNegotiable !== "undefined") {
+            setSalaryNegotiable(!!next.salaryNegotiable);
+            if (next.salaryNegotiable) {
+                clearErrors("minimumSalary", "maximumSalary");
+            }
+        }
+        if (typeof next.minimumSalary !== "undefined") {
+            setMinimumSalary(next.minimumSalary as any);
+            const value = String(next.minimumSalary ?? "").trim();
+            if (value) {
+                clearErrors("minimumSalary");
+            }
+        }
+        if (typeof next.maximumSalary !== "undefined") {
+            setMaximumSalary(next.maximumSalary as any);
+            const value = String(next.maximumSalary ?? "").trim();
+            if (value) {
+                clearErrors("maximumSalary");
+            }
+        }
+    };
+
+    const handleDescriptionChange = (text: string) => {
+        setDescription(text);
+        if (stripHtml(text || "")) {
+            clearErrors("description");
+        }
+    };
 
     const isFormValid = () => {
         return jobTitle?.trim().length > 0 && description?.trim().length > 0 && workSetup?.trim().length > 0;
@@ -324,8 +463,17 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
       }, [user]);
 
     const handleSaveAndContinue = () => {
-      if (!isStepValid(currentStep)) return;
       if (currentStep === 1) {
+        const validationErrors = validateDetails();
+        setDetailsErrors(validationErrors);
+        if (Object.keys(validationErrors).length > 0) {
+          return;
+        }
+      } else if (!isStepValid(currentStep)) {
+        return;
+      }
+      if (currentStep === 1) {
+        setDetailsErrors({});
         writeDraft({ jobTitle, description, employmentType, workSetup, country, province, location: city, salaryNegotiable, minimumSalary, maximumSalary }, orgID);
         goToStep(2);
       } else if (currentStep === 2) {
@@ -358,8 +506,8 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                           Save as Unpublished
                   </button>
                   <button 
-                  disabled={!isStepValid(currentStep) || isSavingCareer}
-                  style={{ width: "fit-content", background: !isStepValid(currentStep) || isSavingCareer ? "#D5D7DA" : "black", color: "#fff", border: "1px solid #E9EAEB", padding: "8px 16px", borderRadius: "60px", cursor: !isStepValid(currentStep) || isSavingCareer ? "not-allowed" : "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 8 }} onClick={handleSaveAndContinue}>
+                  disabled={isSavingCareer}
+                  style={{ width: "fit-content", background: isSavingCareer ? "#D5D7DA" : "black", color: "#fff", border: "1px solid #E9EAEB", padding: "8px 16px", borderRadius: "60px", cursor: isSavingCareer ? "not-allowed" : "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 8 }} onClick={handleSaveAndContinue}>
                       <span style={{ display: "flex", alignItems: "center" }}>Save and Continue</span>
                     <i className="la la-arrow-right" style={{ color: "#fff", fontSize: 20 }}></i>
                   </button>
@@ -381,9 +529,9 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                     }}>
                           Save as Unpublished
                   </button>
-                  <button 
-                  disabled={!isStepValid(currentStep) || isSavingCareer}
-                  style={{ width: "fit-content", background: !isStepValid(currentStep) || isSavingCareer ? "#D5D7DA" : "black", color: "#fff", border: "1px solid #E9EAEB", padding: "8px 16px", borderRadius: "60px", cursor: !isStepValid(currentStep) || isSavingCareer ? "not-allowed" : "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 8 }} onClick={handleSaveAndContinue}>
+                <button
+                  disabled={isSavingCareer}
+                  style={{ width: "fit-content", background: isSavingCareer ? "#D5D7DA" : "black", color: "#fff", border: "1px solid #E9EAEB", padding: "8px 16px", borderRadius: "60px", cursor: isSavingCareer ? "not-allowed" : "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 8 }} onClick={handleSaveAndContinue}>
                         <span style={{ display: "flex", alignItems: "center" }}>Save and Continue</span>
                         <i className="la la-arrow-right" style={{ color: "#fff", fontSize: 20 }}></i>
                   </button>
@@ -398,33 +546,18 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             {currentStep === 1 && (
               <CareerFormDetails
                 value={{ jobTitle, employmentType, workSetup, country, province, city, salaryNegotiable, minimumSalary, maximumSalary }}
-                onChange={(next) => {
-                  if (typeof next.province !== "undefined") {
-                    const provinceObj: any = provinceList.find((p: any) => p.name === next.province);
-                    const cities: any[] = philippineCitiesAndProvinces.cities.filter((c: any) => c.province === (provinceObj?.key || ""));
-                    setCityList(cities);
-                    setCity(cities[0]?.name || "");
-                  }
-                  if (typeof next.jobTitle !== "undefined") setJobTitle(next.jobTitle as string);
-                  if (typeof next.employmentType !== "undefined") setEmploymentType(next.employmentType as string);
-                  if (typeof next.workSetup !== "undefined") setWorkSetup(next.workSetup as string);
-                  if (typeof next.country !== "undefined") setCountry(next.country as string);
-                  if (typeof next.province !== "undefined") setProvince(next.province as string);
-                  if (typeof next.city !== "undefined") setCity(next.city as string);
-                  if (typeof next.salaryNegotiable !== "undefined") setSalaryNegotiable(!!next.salaryNegotiable);
-                  if (typeof next.minimumSalary !== "undefined") setMinimumSalary(next.minimumSalary as any);
-                  if (typeof next.maximumSalary !== "undefined") setMaximumSalary(next.maximumSalary as any);
-                }}
+                onChange={handleDetailsChange}
                 employmentTypeOptions={employmentTypeOptions}
                 workSetupOptions={workSetupOptions}
                 countryOptions={countryOptions}
                 provinceList={provinceList}
                 cityList={cityList}
                 description={description}
-                setDescription={(text) => setDescription(text)}
+                setDescription={handleDescriptionChange}
                 teamMembers={teamMembers}
                 setTeamMembers={setTeamMembers}
                 teamRoleOptions={teamRoleOptions}
+                errors={detailsErrors}
               />
             )}
             {currentStep === 2 && (

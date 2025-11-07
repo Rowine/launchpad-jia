@@ -16,6 +16,19 @@ type DetailsValue = {
     maximumSalary: string | number | null;
 };
 
+type DetailsErrors = Partial<Record<
+    | "jobTitle"
+    | "employmentType"
+    | "workSetup"
+    | "country"
+    | "province"
+    | "city"
+    | "minimumSalary"
+    | "maximumSalary"
+    | "description",
+    string
+>>;
+
 type Props = {
     value: DetailsValue;
     onChange: (next: Partial<DetailsValue>) => void;
@@ -29,13 +42,41 @@ type Props = {
     teamMembers: any[];
     setTeamMembers: (members: any[]) => void;
     teamRoleOptions: { name: string }[];
+    errors: DetailsErrors;
 };
 
 export default function CareerFormDetails(props: Props) {
-    const { value, onChange, employmentTypeOptions, workSetupOptions, countryOptions, provinceList, cityList, description, setDescription, teamMembers, setTeamMembers, teamRoleOptions } = props;
+    const { value, onChange, employmentTypeOptions, workSetupOptions, countryOptions, provinceList, cityList, description, setDescription, teamMembers, setTeamMembers, teamRoleOptions, errors } = props;
+
+    const inputBaseStyle = {
+        border: "1px solid #E9EAEB",
+        borderRadius: 5,
+        color: "#333",
+        fontSize: "1rem",
+        width: "100%",
+        padding: "8px 12px",
+        outline: "none",
+        backgroundColor: "#FFFFFF",
+        boxSizing: "border-box" as const,
+    };
+
+    const getInputStyle = (hasError: boolean) => ({
+        ...inputBaseStyle,
+        border: `1px solid ${hasError ? "#F04438" : "#E9EAEB"}`,
+        backgroundColor: hasError ? "#FFFBFA" : "#FFFFFF",
+    });
+
+    const renderErrorText = (field: keyof DetailsErrors) => {
+        if (!errors[field]) return null;
+        return (
+            <span style={{ color: "#F04438", fontSize: 14, fontWeight: 400, marginTop: 4, display: "block" }}>
+                {errors[field]}
+            </span>
+        );
+    };
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <form onSubmit={(event) => event.preventDefault()} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <div className="layered-card-middle">
                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
                     <span style={{ fontSize: 16, color: "#181D27", fontWeight: 700, padding: "4px 12px" }}>1. Career Information</span>
@@ -45,10 +86,11 @@ export default function CareerFormDetails(props: Props) {
                     <span style={{ fontSize: 14, color: "#414651", fontWeight: 500 }}>Job Title</span>
                     <input
                         value={value.jobTitle}
-                        style={{ border: "1px solid #E9EAEB", borderRadius: 5, color: "#333", fontSize: "1rem", width: "100%", padding: "8px 12px", outline: "none" }}
+                        style={getInputStyle(!!errors.jobTitle)}
                         placeholder="Enter job title"
                         onChange={(e) => onChange({ jobTitle: e.target.value || "" })}
                     />
+                    {renderErrorText("jobTitle")}
 
                     <span style={{ fontSize: 14, color: "#181D27", fontWeight: 700, marginTop: 16, display: "block" }}>Work Setting</span>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
@@ -59,7 +101,9 @@ export default function CareerFormDetails(props: Props) {
                                 screeningSetting={value.employmentType}
                                 settingList={employmentTypeOptions}
                                 placeholder="Choose employment type"
+                                error={!!errors.employmentType}
                             />
+                            {renderErrorText("employmentType")}
                         </div>
                         <div>
                             <span style={{ fontSize: 14, color: "#414651", fontWeight: 500 }}>Arrangement</span>
@@ -68,7 +112,9 @@ export default function CareerFormDetails(props: Props) {
                                 screeningSetting={value.workSetup}
                                 settingList={workSetupOptions}
                                 placeholder="Choose work arrangement"
+                                error={!!errors.workSetup}
                             />
+                            {renderErrorText("workSetup")}
                         </div>
                     </div>
 
@@ -81,7 +127,9 @@ export default function CareerFormDetails(props: Props) {
                                 screeningSetting={value.country}
                                 settingList={countryOptions}
                                 placeholder="Select Country"
+                                error={!!errors.country}
                             />
+                            {renderErrorText("country")}
                         </div>
                         <div>
                             <span style={{ fontSize: 14, color: "#414651", fontWeight: 500 }}>State / Province</span>
@@ -90,7 +138,9 @@ export default function CareerFormDetails(props: Props) {
                                 screeningSetting={value.province}
                                 settingList={provinceList}
                                 placeholder="Choose state / province"
+                                error={!!errors.province}
                             />
+                            {renderErrorText("province")}
                         </div>
                         <div>
                             <span style={{ fontSize: 14, color: "#414651", fontWeight: 500 }}>City</span>
@@ -99,7 +149,9 @@ export default function CareerFormDetails(props: Props) {
                                 screeningSetting={value.city}
                                 settingList={cityList}
                                 placeholder="Choose city"
+                                error={!!errors.city}
                             />
+                            {renderErrorText("city")}
                         </div>
                     </div>
 
@@ -120,7 +172,13 @@ export default function CareerFormDetails(props: Props) {
                                 <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#6c757d", fontSize: 16, pointerEvents: "none", zIndex: 1 }}>₱</span>
                                 <input
                                     type="number"
-                                    style={{ border: "1px solid #E9EAEB", borderRadius: 5, color: "#333", fontSize: "1rem", width: "100%", paddingLeft: 28, paddingRight: 60, paddingTop: 8, paddingBottom: 8, outline: "none" }}
+                                    style={{
+                                        ...getInputStyle(!!errors.minimumSalary),
+                                        paddingLeft: 28,
+                                        paddingRight: 60,
+                                        paddingTop: 8,
+                                        paddingBottom: 8,
+                                    }}
                                     placeholder="0"
                                     min={0}
                                     value={String(value.minimumSalary ?? "")}
@@ -128,6 +186,7 @@ export default function CareerFormDetails(props: Props) {
                                 />
                                 <span style={{ position: "absolute", right: 30, top: "50%", transform: "translateY(-50%)", color: "#6c757d", fontSize: 16, pointerEvents: "none", fontWeight: 500 }}>PHP</span>
                             </div>
+                            {renderErrorText("minimumSalary")}
                         </div>
                         <div style={{ position: "relative" }}>
                             <span style={{ fontSize: 14, color: "#414651", fontWeight: 500 }}>Maximum Salary</span>
@@ -135,7 +194,13 @@ export default function CareerFormDetails(props: Props) {
                                 <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#6c757d", fontSize: 16, pointerEvents: "none", zIndex: 1 }}>₱</span>
                                 <input
                                     type="number"
-                                    style={{ border: "1px solid #E9EAEB", borderRadius: 5, color: "#333", fontSize: "1rem", width: "100%", paddingLeft: 28, paddingRight: 60, paddingTop: 8, paddingBottom: 8, outline: "none" }}
+                                    style={{
+                                        ...getInputStyle(!!errors.maximumSalary),
+                                        paddingLeft: 28,
+                                        paddingRight: 60,
+                                        paddingTop: 8,
+                                        paddingBottom: 8,
+                                    }}
                                     placeholder="0"
                                     min={0}
                                     value={String(value.maximumSalary ?? "")}
@@ -143,6 +208,7 @@ export default function CareerFormDetails(props: Props) {
                                 />
                                 <span style={{ position: "absolute", right: 30, top: "50%", transform: "translateY(-50%)", color: "#6c757d", fontSize: 16, pointerEvents: "none", fontWeight: 500 }}>PHP</span>
                             </div>
+                            {renderErrorText("maximumSalary")}
                         </div>
                     </div>
                 </div>
@@ -153,7 +219,8 @@ export default function CareerFormDetails(props: Props) {
                     <span style={{ fontSize: 16, color: "#181D27", fontWeight: 700, padding: "4px 12px" }}>2. Job Description</span>
                 </div>
                 <div className="layered-card-content">
-                    <RichTextEditor setText={setDescription} text={description} />
+                    <RichTextEditor setText={setDescription} text={description} hasError={!!errors.description} />
+                    {renderErrorText("description")}
                 </div>
             </div>
 
@@ -210,7 +277,7 @@ export default function CareerFormDetails(props: Props) {
                     <span style={{ fontSize: 12, color: "#98A2B3" }}>*Admins can view all careers regardless of specific access settings.</span>
                 </div>
             </div>
-        </div>
+        </form>
     );
 }
 

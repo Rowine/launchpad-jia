@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from "react";
 
-export default function RichTextEditor({setText, text}) {
+export default function RichTextEditor({ setText, text, hasError = false }) {
     const descriptionEditorRef = useRef(null);
 
     const formatText = (command, value = null) => {
@@ -66,20 +66,23 @@ export default function RichTextEditor({setText, text}) {
         }
       }, [text]);
 
+      const borderColor = hasError ? "#F04438" : "#E9EAEB";
+      const backgroundColor = hasError ? "#FFFBFA" : "#FFFFFF";
+
       return (
-        <>
+        <div style={{ border: `2px solid ${borderColor}`, borderRadius: "5px" }}>
         <div
           ref={descriptionEditorRef}
           contentEditable={true}
-          className="form-control"
           style={{
             height: "300px",
             overflowY: "auto",
-            borderTopLeftRadius: "0",
-            borderTopRightRadius: "0",
             padding: "12px",
             lineHeight: "1.5",
-            position: "relative"
+            position: "relative",
+            border: "none",
+            borderBottom: "1px solid #E9EAEB",
+            borderRadius: "4px 4px 0 0",
           }}
           onInput={handleDescriptionChange}
           onBlur={handleDescriptionChange}
@@ -88,7 +91,8 @@ export default function RichTextEditor({setText, text}) {
         ></div>
         {/* Rich Text Editor Toolbar */}
         <div style={{ 
-          border: "1px solid #E9EAEB",
+          border: "none",
+          borderTop: "1px solid #E9EAEB",
           borderRadius: "0 0 4px 4px",
           backgroundColor: "#FFFFFF",
           display: "flex",
@@ -165,6 +169,6 @@ export default function RichTextEditor({setText, text}) {
             left: 12px;
           }
         `}</style>
-        </>
+        </div>
       )
 }
