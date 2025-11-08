@@ -22,10 +22,11 @@ type Props = {
     jobTitle: string;
     description: string;
     aiQuestionsError?: string;
+    aiInterviewSecretPrompt: string;
+    setAiInterviewSecretPrompt: (v: string) => void;
 };
 
-export default function CareerFormAI({ questions, setQuestions, requireVideo, setRequireVideo, screeningSetting, setScreeningSetting, screeningSettingList, jobTitle, description, aiQuestionsError }: Props) {
-    const [aiInterviewSecretPrompt, setAiInterviewSecretPrompt] = useState("");
+export default function CareerFormAI({ questions, setQuestions, requireVideo, setRequireVideo, screeningSetting, setScreeningSetting, screeningSettingList, jobTitle, description, aiQuestionsError, aiInterviewSecretPrompt, setAiInterviewSecretPrompt }: Props) {
     const [showHelpTooltip, setShowHelpTooltip] = useState(false);
 
     return (
