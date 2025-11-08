@@ -605,8 +605,8 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         <div style={{ marginTop: 4, marginBottom: 12 }}>
             <CareerFormStepper currentStep={currentStep - 1} progressEnabled={isStepValid(currentStep)} errorStepIndex={stepErrorIndex} />
         </div>
-        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%", gap: 16, alignItems: "flex-start", marginTop: 16 }}>
-        <div style={{ width: "70%", display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ display: "flex", flexDirection: "row", justifyContent: currentStep === 5 ? "center" : "space-between", width: "100%", gap: 16, alignItems: "flex-start", marginTop: 16 }}>
+        <div style={{ width: currentStep === 5 ? "90%" : "70%", maxWidth: currentStep === 5 ? "1400px" : "none", display: "flex", flexDirection: "column", gap: 8 }}>
             {currentStep === 1 && (
               <CareerFormDetails
                 value={{ jobTitle, employmentType, workSetup, country, province, city, salaryNegotiable, minimumSalary, maximumSalary }}
@@ -662,6 +662,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             )}
         </div>
 
+        {currentStep !== 5 && (
         <div style={{ width: "30%", display: "flex", flexDirection: "column", gap: 8 }}>
               {currentStep === 1 && (
                 <CareerFormTips titles={["Use clear, standard job titles", "Avoid abbreviations", "Keep it concise"]} descriptions={["for better searchability (e.g., \"Software Engineer\" instead of \"Code Ninja\" or \"Tech Rockstar\").", "or internal role codes that applicants may not understand (e.g., use \"QA Engineer\" instead of \"QE II\" or \"QA‑TL\").", "job titles should be no more than a few words (2—4 max), avoiding fluff or marketing terms."]} />
@@ -673,6 +674,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                 <CareerFormTips titles={["Add a Secret Prompt", 'Use "Generate Questions"']} descriptions={["to fine-tune how Jia scores and evaluates the interview responses.", "to quickly create tailored interview questions, then refine or mix them with your own for balanced results."]} />
               )}
           </div>
+        )}
       </div>
       {showSaveModal && (
          <CareerActionModal action={showSaveModal} onAction={(action) => saveCareer(action)} />
