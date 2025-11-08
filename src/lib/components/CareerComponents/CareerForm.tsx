@@ -648,7 +648,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             )}
             {currentStep === 5 && (
               <CareerFormReview
-                summary={{ jobTitle, description, workSetup, workSetupRemarks, questions, screeningSetting, cvSecretPrompt, requireVideo, salaryNegotiable, minimumSalary, maximumSalary, country, province, location: city, employmentType, orgID }}
+                summary={{ jobTitle, description, workSetup, workSetupRemarks, questions, screeningSetting, cvSecretPrompt, requireVideo, salaryNegotiable, minimumSalary, maximumSalary, country, province, location: city, employmentType, orgID, teamMembers }}
               />
             )}
         </div>
