@@ -390,26 +390,9 @@ export default function (props) {
                   const target = e.currentTarget;
                   const bounding = target.getBoundingClientRect();
                   const offset = bounding.y + bounding.height / 2;
-
-                  if (e.clientY - offset > 0) {
-                    target.style.borderBottom = "3px solid";
-                    target.style.borderImage = "linear-gradient(90deg, #9fcaed 0%, #ceb6da 33%, #ebacc9 66%, #fccec0 100%) 1";
-                    target.style.borderTop = "none";
-                  } else {
-                    target.style.borderTop = "3px solid";
-                    target.style.borderImage = "linear-gradient(90deg, #9fcaed 0%, #ceb6da 33%, #ebacc9 66%, #fccec0 100%) 1";
-                    target.style.borderBottom = "none";
-                  }
-                }}
-                onDragLeave={(e) => {
-                  e.currentTarget.style.borderTop = "none";
-                  e.currentTarget.style.borderBottom = "none";
                 }}
                 onDrop={(e) => {
                   e.preventDefault();
-                  e.currentTarget.style.borderTop = "none";
-                  e.currentTarget.style.borderBottom = "none";
-
                   const bounding = e.currentTarget.getBoundingClientRect();
                   const offset = bounding.y + bounding.height / 2;
                   const insertIndex = e.clientY - offset > 0 ? index + 1 : index;
@@ -519,7 +502,7 @@ export default function (props) {
 
                       <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8, height: "100%" }}>
                         <i className="la la-grip-vertical" style={{ fontSize: 20, color: "#A4A7AE" }}></i>
-                        <span style={{ wordBreak: "break-word", whiteSpace: "pre-line" }}>
+                        <span style={{ wordBreak: "break-word", whiteSpace: "pre-line", fontSize: 16, color: "#181D27", fontWeight: 500 }}>
                           {question.question}
                         </span>
                       </div>
@@ -533,8 +516,8 @@ export default function (props) {
                             setQuestionModalQuestion(question);
                           }}
                         >
-                          <i className="la la-pencil-alt"></i>
-                          <span>Edit</span>
+                          <i className="la la-pencil-alt" style={{ fontSize: 20, color: "#181D27" }}></i>
+                          <span style={{ fontSize: 14, color: "#181D27", fontWeight: 700, marginLeft: 8 }}>Edit</span>
                         </button>
 
                         <button
