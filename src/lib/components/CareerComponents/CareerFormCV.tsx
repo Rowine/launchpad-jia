@@ -202,6 +202,32 @@ export default function CareerFormCV({ jobTitle, screeningSetting, setScreeningS
         setPreScreeningQuestions([...preScreeningQuestions, newQuestion]);
     };
 
+    const handleReorderQuestions = (
+        draggedQuestionId: number,
+        insertIndex: number
+    ) => {
+        const updatedQuestions = [...preScreeningQuestions];
+        const draggedQuestionIndex = updatedQuestions.findIndex(
+            (q) => q.id === draggedQuestionId
+        );
+
+        if (draggedQuestionIndex === -1) return;
+
+        const questionToMove = updatedQuestions[draggedQuestionIndex];
+        
+        // Remove the dragged question first
+        updatedQuestions.splice(draggedQuestionIndex, 1);
+        
+        // Adjust insert index if dragging from a lower index to a higher index
+        const adjustedInsertIndex = draggedQuestionIndex < insertIndex 
+            ? insertIndex - 1 
+            : insertIndex;
+        
+        updatedQuestions.splice(adjustedInsertIndex, 0, questionToMove);
+
+        setPreScreeningQuestions(updatedQuestions);
+    };
+
     const isQuestionAdded = (suggestedId: string) => {
         return preScreeningQuestions.some((q) => q.suggestedId === suggestedId);
     };
@@ -396,17 +422,69 @@ export default function CareerFormCV({ jobTitle, screeningSetting, setScreeningS
                         </>
                     ) : (
                         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                            {preScreeningQuestions.map((question) => {
+                            {preScreeningQuestions.map((question, questionIndex) => {
                                 const isDropdownOpen = openDropdownId === question.id;
                                 const selectedType = questionTypes.find((t) => t.name === question.type) || questionTypes[0];
                                 return (
                                 <div
                                     key={question.id}
+                                    draggable={true}
+                                    onDragStart={(e) => {
+                                        e.dataTransfer.setData("questionId", question.id.toString());
+                                        e.currentTarget.style.opacity = "0.5";
+                                        e.currentTarget.style.cursor = "grabbing";
+                                    }}
+                                    onDragEnd={(e) => {
+                                        e.currentTarget.style.opacity = "1";
+                                        e.currentTarget.style.cursor = "grab";
+                                        e.currentTarget.style.borderTop = "none";
+                                        e.currentTarget.style.borderBottom = "none";
+                                    }}
+                                    onDragOver={(e) => {
+                                        e.preventDefault();
+                                        const target = e.currentTarget;
+                                        const bounding = target.getBoundingClientRect();
+                                        const offset = bounding.y + bounding.height / 2;
+
+                                        // Add visual indicator for drop position
+                                        if (e.clientY - offset > 0) {
+                                            target.style.borderBottom = "2px solid";
+                                            target.style.borderImage = "linear-gradient(90deg, #9fcaed 0%, #ceb6da 33%, #ebacc9 66%, #fccec0 100%) 1";
+                                            target.style.borderTop = "none";
+                                        } else {
+                                            target.style.borderTop = "2px solid";
+                                            target.style.borderImage = "linear-gradient(90deg, #9fcaed 0%, #ceb6da 33%, #ebacc9 66%, #fccec0 100%) 1";
+                                            target.style.borderBottom = "none";
+                                        }
+                                    }}
+                                    onDragLeave={(e) => {
+                                        // Remove visual indicators
+                                        e.currentTarget.style.borderTop = "none";
+                                        e.currentTarget.style.borderBottom = "none";
+                                    }}
+                                    onDrop={(e) => {
+                                        e.preventDefault();
+
+                                        // Remove visual indicators
+                                        e.currentTarget.style.borderTop = "none";
+                                        e.currentTarget.style.borderBottom = "none";
+
+                                        const draggedQuestionId = Number(e.dataTransfer.getData("questionId"));
+
+                                        if (!isNaN(draggedQuestionId) && draggedQuestionId !== question.id) {
+                                            const bounding = e.currentTarget.getBoundingClientRect();
+                                            const offset = bounding.y + bounding.height / 2;
+                                            const insertIndex = e.clientY - offset > 0 ? questionIndex + 1 : questionIndex;
+
+                                            handleReorderQuestions(draggedQuestionId, insertIndex);
+                                        }
+                                    }}
                                     style={{
                                         display: "flex",
                                         flexDirection: "row",
                                         gap: 12,
                                         alignItems: "center",
+                                        cursor: "grab",
                                     }}
                                 >
                                     {/* Drag Handle - Outside the card */}
