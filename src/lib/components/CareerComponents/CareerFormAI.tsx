@@ -21,9 +21,10 @@ type Props = {
     screeningSettingList: { name: string; icon?: string }[];
     jobTitle: string;
     description: string;
+    aiQuestionsError?: string;
 };
 
-export default function CareerFormAI({ questions, setQuestions, requireVideo, setRequireVideo, screeningSetting, setScreeningSetting, screeningSettingList, jobTitle, description }: Props) {
+export default function CareerFormAI({ questions, setQuestions, requireVideo, setRequireVideo, screeningSetting, setScreeningSetting, screeningSettingList, jobTitle, description, aiQuestionsError }: Props) {
     const [aiInterviewSecretPrompt, setAiInterviewSecretPrompt] = useState("");
     const [showHelpTooltip, setShowHelpTooltip] = useState(false);
 
@@ -174,7 +175,7 @@ export default function CareerFormAI({ questions, setQuestions, requireVideo, se
                     </div>
                 </div>
             </div>
-            <InterviewQuestionGeneratorV2 questions={questions} setQuestions={(questions) => setQuestions(questions)} jobTitle={jobTitle} description={description} />
+            <InterviewQuestionGeneratorV2 questions={questions} setQuestions={(questions) => setQuestions(questions)} jobTitle={jobTitle} description={description} errorMessage={aiQuestionsError} />
         </div>
     );
 }

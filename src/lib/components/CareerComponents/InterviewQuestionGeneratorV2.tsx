@@ -28,7 +28,7 @@ function SparkleIcon() {
 }
 
 export default function (props) {
-  const { questions, setQuestions, jobTitle, description } = props;
+  const { questions, setQuestions, jobTitle, description, errorMessage } = props;
   const [questionGenPrompt, setQuestionGenPrompt] = useState("");
   const questionCount = 5;
   const [showQuestionModal, setShowQuestionModal] = useState("");
@@ -376,6 +376,12 @@ export default function (props) {
           </button>
         </div>
         <div className="layered-card-content">
+          {errorMessage ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 12px" }}>
+              <i className="la la-exclamation-triangle" style={{ fontSize: 20, color: "#D92D20" }}></i>
+              <span style={{ fontSize: 14, fontWeight: 500, color: "#D92D20"}}>{errorMessage}</span>
+            </div>
+          ) : null}
           <div className="questions-set">
             {questions.map((group, index) => (
               <div

@@ -131,6 +131,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     const [cityList, setCityList] = useState([]);
     const [showSaveModal, setShowSaveModal] = useState("");
     const [isSavingCareer, setIsSavingCareer] = useState(false);
+    const [aiQuestionsError, setAiQuestionsError] = useState("");
     const savingCareerRef = useRef(false);
     const [detailsErrors, setDetailsErrors] = useState<DetailsErrors>({});
     const [stepErrorIndex, setStepErrorIndex] = useState<number | null>(null);
@@ -305,7 +306,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
           case 2:
               return description?.trim().length > 0;
           case 3:
-              return true;
+              return questions.reduce((acc, group) => acc + (Array.isArray(group.questions) ? group.questions.length : 0), 0) >= 5;
           case 4:
               return true;
           case 5:
@@ -320,6 +321,14 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     setCurrentStep(safeStep);
     setStepInUrl(safeStep);
   };
+
+  // Clear AI questions error once requirement is satisfied
+  useEffect(() => {
+    const totalQuestions = questions.reduce((acc, group) => acc + (Array.isArray(group.questions) ? group.questions.length : 0), 0);
+    if (totalQuestions >= 5 && aiQuestionsError) {
+      setAiQuestionsError("");
+    }
+  }, [questions, aiQuestionsError]);
 
   useEffect(() => {
     const updateStepFromUrl = () => {
@@ -502,6 +511,13 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
           setStepErrorIndex(currentStep - 1);
           return;
         }
+      } else if (currentStep === 3) {
+        const totalQuestions = questions.reduce((acc, group) => acc + (Array.isArray(group.questions) ? group.questions.length : 0), 0);
+        if (totalQuestions < 5) {
+          setStepErrorIndex(currentStep - 1);
+          setAiQuestionsError("Please add at least 5 interview questions.");
+          return;
+        }
       } else if (!isStepValid(currentStep)) {
         setStepErrorIndex(currentStep - 1);
         return;
@@ -620,6 +636,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                 screeningSettingList={screeningSettingList}
                 jobTitle={jobTitle}
                 description={description}
+                aiQuestionsError={aiQuestionsError}
               />
             )}
             {currentStep === 4 && (
