@@ -82,7 +82,8 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     const [description, setDescription] = useState(career?.description || "");
     const [workSetup, setWorkSetup] = useState(career?.workSetup || "");
     const [workSetupRemarks, setWorkSetupRemarks] = useState(career?.workSetupRemarks || "");
-    const [screeningSetting, setScreeningSetting] = useState(career?.screeningSetting || "Good Fit and above");
+    const [cvScreeningSetting, setCvScreeningSetting] = useState(career?.cvScreeningSetting || career?.screeningSetting || "Good Fit and above");
+    const [aiInterviewScreeningSetting, setAiInterviewScreeningSetting] = useState(career?.aiInterviewScreeningSetting || career?.screeningSetting || "Good Fit and above");
     const [cvSecretPrompt, setCvSecretPrompt] = useState(career?.cvSecretPrompt || "");
     const [employmentType, setEmploymentType] = useState(career?.employmentType || "");
     const [requireVideo, setRequireVideo] = useState(career?.requireVideo || true);
@@ -365,7 +366,8 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             lastEditedBy: userInfoSlice,
             status,
             updatedAt: Date.now(),
-            screeningSetting,
+            cvScreeningSetting,
+            aiInterviewScreeningSetting,
             cvSecretPrompt,
             requireVideo,
             salaryNegotiable,
@@ -431,7 +433,8 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             questions,
             lastEditedBy: userInfoSlice,
             createdBy: userInfoSlice,
-            screeningSetting,
+            cvScreeningSetting,
+            aiInterviewScreeningSetting,
             cvSecretPrompt,
             orgID,
             requireVideo,
@@ -477,7 +480,13 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
           if (draft.description) setDescription(draft.description);
           if (draft.workSetup) setWorkSetup(draft.workSetup);
           if (typeof draft.workSetupRemarks !== "undefined") setWorkSetupRemarks(draft.workSetupRemarks);
-          if (draft.screeningSetting) setScreeningSetting(draft.screeningSetting);
+          if (draft.cvScreeningSetting) setCvScreeningSetting(draft.cvScreeningSetting);
+          if (draft.aiInterviewScreeningSetting) setAiInterviewScreeningSetting(draft.aiInterviewScreeningSetting);
+          // Backwards compatibility
+          if (draft.screeningSetting && !draft.cvScreeningSetting && !draft.aiInterviewScreeningSetting) {
+            setCvScreeningSetting(draft.screeningSetting);
+            setAiInterviewScreeningSetting(draft.screeningSetting);
+          }
           if (draft.cvSecretPrompt) setCvSecretPrompt(draft.cvSecretPrompt);
           if (typeof draft.requireVideo !== "undefined") setRequireVideo(draft.requireVideo);
           if (typeof draft.salaryNegotiable !== "undefined") setSalaryNegotiable(draft.salaryNegotiable);
@@ -529,11 +538,11 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         goToStep(2);
       } else if (currentStep === 2) {
         setStepErrorIndex(null);
-        writeDraft({ screeningSetting, cvSecretPrompt }, orgID);
+        writeDraft({ cvScreeningSetting, cvSecretPrompt }, orgID);
         goToStep(3);
       } else if (currentStep === 3) {
         setStepErrorIndex(null);
-        writeDraft({ questions, requireVideo, screeningSetting }, orgID);
+        writeDraft({ questions, requireVideo, aiInterviewScreeningSetting }, orgID);
         goToStep(4);
       } else if (currentStep === 4) {
         setStepErrorIndex(null);
@@ -618,8 +627,8 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             {currentStep === 2 && (
               <CareerFormCV
                 jobTitle={jobTitle}
-                screeningSetting={screeningSetting}
-                setScreeningSetting={setScreeningSetting}
+                screeningSetting={cvScreeningSetting}
+                setScreeningSetting={setCvScreeningSetting}
                 screeningSettingList={screeningSettingList}
                 cvSecretPrompt={cvSecretPrompt}
                 setCvSecretPrompt={setCvSecretPrompt}
@@ -631,8 +640,8 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                 setQuestions={setQuestions}
                 requireVideo={requireVideo}
                 setRequireVideo={setRequireVideo}
-                screeningSetting={screeningSetting}
-                setScreeningSetting={setScreeningSetting}
+                screeningSetting={aiInterviewScreeningSetting}
+                setScreeningSetting={setAiInterviewScreeningSetting}
                 screeningSettingList={screeningSettingList}
                 jobTitle={jobTitle}
                 description={description}
@@ -648,7 +657,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             )}
             {currentStep === 5 && (
               <CareerFormReview
-                summary={{ jobTitle, description, workSetup, workSetupRemarks, questions, screeningSetting, cvSecretPrompt, requireVideo, salaryNegotiable, minimumSalary, maximumSalary, country, province, location: city, employmentType, orgID, teamMembers }}
+                summary={{ jobTitle, description, workSetup, workSetupRemarks, questions, cvScreeningSetting, aiInterviewScreeningSetting, cvSecretPrompt, requireVideo, salaryNegotiable, minimumSalary, maximumSalary, country, province, location: city, employmentType, orgID, teamMembers }}
               />
             )}
         </div>
