@@ -618,6 +618,8 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                 screeningSetting={screeningSetting}
                 setScreeningSetting={setScreeningSetting}
                 screeningSettingList={screeningSettingList}
+                jobTitle={jobTitle}
+                description={description}
               />
             )}
             {currentStep === 4 && (

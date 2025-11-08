@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import CustomDropdown from "@/lib/components/CareerComponents/CustomDropdown";
+import InterviewQuestionGeneratorV2 from "./InterviewQuestionGeneratorV2";
 
 type QuestionCategory = {
     id: number;
@@ -18,9 +19,11 @@ type Props = {
     screeningSetting: string;
     setScreeningSetting: (v: string) => void;
     screeningSettingList: { name: string; icon?: string }[];
+    jobTitle: string;
+    description: string;
 };
 
-export default function CareerFormAI({ questions, setQuestions, requireVideo, setRequireVideo, screeningSetting, setScreeningSetting, screeningSettingList }: Props) {
+export default function CareerFormAI({ questions, setQuestions, requireVideo, setRequireVideo, screeningSetting, setScreeningSetting, screeningSettingList, jobTitle, description }: Props) {
     const [aiInterviewSecretPrompt, setAiInterviewSecretPrompt] = useState("");
     const [showHelpTooltip, setShowHelpTooltip] = useState(false);
 
@@ -171,6 +174,7 @@ export default function CareerFormAI({ questions, setQuestions, requireVideo, se
                     </div>
                 </div>
             </div>
+            <InterviewQuestionGeneratorV2 questions={questions} setQuestions={(questions) => setQuestions(questions)} jobTitle={jobTitle} description={description} />
         </div>
     );
 }
