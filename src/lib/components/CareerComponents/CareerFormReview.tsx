@@ -279,7 +279,7 @@ export default function CareerFormReview({ summary }: Props) {
                                             fontWeight: 500 
                                         }}
                                     >
-                                        {summary.screeningSetting || "Good Fit"}
+                                        {summary.cvScreeningSetting || "Good Fit"}
                                     </span>
                                     <span style={{ fontSize: 16, color: "#414651", fontWeight: 500 }}>and above</span>
                                 </div>
@@ -438,7 +438,7 @@ export default function CareerFormReview({ summary }: Props) {
                                             fontWeight: 500 
                                         }}
                                     >
-                                        {summary.screeningSetting || "Good Fit"}
+                                        {summary.aiInterviewScreeningSetting || "Good Fit"}
                                     </span>
                                     <span style={{ fontSize: 16, color: "#414651", fontWeight: 500 }}>and above</span>
                                 </div>
