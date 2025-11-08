@@ -85,6 +85,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     const [cvScreeningSetting, setCvScreeningSetting] = useState(career?.cvScreeningSetting || career?.screeningSetting || "Good Fit and above");
     const [aiInterviewScreeningSetting, setAiInterviewScreeningSetting] = useState(career?.aiInterviewScreeningSetting || career?.screeningSetting || "Good Fit and above");
     const [cvSecretPrompt, setCvSecretPrompt] = useState(career?.cvSecretPrompt || "");
+    const [aiInterviewSecretPrompt, setAiInterviewSecretPrompt] = useState(career?.aiInterviewSecretPrompt || "");
     const [employmentType, setEmploymentType] = useState(career?.employmentType || "");
     const [requireVideo, setRequireVideo] = useState(career?.requireVideo || true);
     const [salaryNegotiable, setSalaryNegotiable] = useState(career?.salaryNegotiable || true);
@@ -369,6 +370,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             cvScreeningSetting,
             aiInterviewScreeningSetting,
             cvSecretPrompt,
+            aiInterviewSecretPrompt,
             requireVideo,
             salaryNegotiable,
             minimumSalary: isNaN(Number(minimumSalary)) ? null : Number(minimumSalary),
@@ -488,6 +490,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             setAiInterviewScreeningSetting(draft.screeningSetting);
           }
           if (draft.cvSecretPrompt) setCvSecretPrompt(draft.cvSecretPrompt);
+          if (draft.aiInterviewSecretPrompt) setAiInterviewSecretPrompt(draft.aiInterviewSecretPrompt);
           if (typeof draft.requireVideo !== "undefined") setRequireVideo(draft.requireVideo);
           if (typeof draft.salaryNegotiable !== "undefined") setSalaryNegotiable(draft.salaryNegotiable);
           if (typeof draft.minimumSalary !== "undefined") setMinimumSalary(draft.minimumSalary);
@@ -542,7 +545,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         goToStep(3);
       } else if (currentStep === 3) {
         setStepErrorIndex(null);
-        writeDraft({ questions, requireVideo, aiInterviewScreeningSetting }, orgID);
+        writeDraft({ questions, requireVideo, aiInterviewScreeningSetting, aiInterviewSecretPrompt }, orgID);
         goToStep(4);
       } else if (currentStep === 4) {
         setStepErrorIndex(null);
@@ -646,6 +649,8 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                 jobTitle={jobTitle}
                 description={description}
                 aiQuestionsError={aiQuestionsError}
+                aiInterviewSecretPrompt={aiInterviewSecretPrompt}
+                setAiInterviewSecretPrompt={setAiInterviewSecretPrompt}
               />
             )}
             {currentStep === 4 && (
@@ -657,7 +662,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             )}
             {currentStep === 5 && (
               <CareerFormReview
-                summary={{ jobTitle, description, workSetup, workSetupRemarks, questions, cvScreeningSetting, aiInterviewScreeningSetting, cvSecretPrompt, requireVideo, salaryNegotiable, minimumSalary, maximumSalary, country, province, location: city, employmentType, orgID, teamMembers }}
+                summary={{ jobTitle, description, workSetup, workSetupRemarks, questions, cvScreeningSetting, aiInterviewScreeningSetting, cvSecretPrompt, aiInterviewSecretPrompt, requireVideo, salaryNegotiable, minimumSalary, maximumSalary, country, province, location: city, employmentType, orgID, teamMembers }}
               />
             )}
         </div>
