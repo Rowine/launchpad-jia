@@ -551,7 +551,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     return (
         <div className="col">
         {formType === "add" ? (<div style={{ marginBottom: "12px", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-              <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#181D27" }}>{currentStep === 2 ? `[Draft] ${draftTitle}` : "Add new career"}</h1>
+              <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#181D27" }}>{currentStep !== 1 ? `[Draft] ${draftTitle}` : "Add new career"}</h1>
               <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px" }}>
                   <button
                   disabled={isSavingCareer}
@@ -659,6 +659,9 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
               )}
               {currentStep === 2 && (
                 <CareerFormTips titles={["Add a Secret Prompt", "Add Pre-Screening questions"]} descriptions={["to fine-tune how Jia scores and evaluates submitted CVs.", "to collect key details such as notice period, work setup, or salary expectations to guide your review and candidate discussions."]} />
+              )}
+              {currentStep === 3 && (
+                <CareerFormTips titles={["Add a Secret Prompt", 'Use "Generate Questions"']} descriptions={["to fine-tune how Jia scores and evaluates the interview responses.", "to quickly create tailored interview questions, then refine or mix them with your own for balanced results."]} />
               )}
           </div>
       </div>

@@ -29,7 +29,7 @@ export default function CareerFormAI({ questions, setQuestions, requireVideo, se
     const [showHelpTooltip, setShowHelpTooltip] = useState(false);
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             <div className="layered-card-middle">
                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
                     <span style={{ fontSize: 16, color: "#181D27", fontWeight: 700, padding: "4px 12px" }}>1. AI Interview Settings</span>
