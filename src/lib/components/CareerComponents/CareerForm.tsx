@@ -156,17 +156,21 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
 
         // Handle salary fields
         if (next.minimumSalary !== undefined) {
-            updates.minimumSalary = next.minimumSalary;
-            const value = String(next.minimumSalary ?? "").trim();
-            if (value) {
+            const raw = next.minimumSalary as any;
+            const normalized = raw === "" || raw === null || raw === undefined ? null : Number(raw);
+            updates.minimumSalary = isNaN(Number(normalized)) ? null : (normalized as number | null);
+            const valueStr = String(raw ?? "").trim();
+            if (valueStr) {
                 clearErrors("minimumSalary");
             }
         }
 
         if (next.maximumSalary !== undefined) {
-            updates.maximumSalary = next.maximumSalary;
-            const value = String(next.maximumSalary ?? "").trim();
-            if (value) {
+            const raw = next.maximumSalary as any;
+            const normalized = raw === "" || raw === null || raw === undefined ? null : Number(raw);
+            updates.maximumSalary = isNaN(Number(normalized)) ? null : (normalized as number | null);
+            const valueStr = String(raw ?? "").trim();
+            if (valueStr) {
                 clearErrors("maximumSalary");
             }
         }

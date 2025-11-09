@@ -39,7 +39,7 @@ export class CareerService {
   /**
    * Normalizes salary value to number or null
    */
-  static normalizeSalary(value: string | number): number | null {
+  static normalizeSalary(value: string | number | null): number | null {
     const num = Number(value);
     return isNaN(num) ? null : num;
   }
@@ -105,8 +105,8 @@ export class CareerService {
    * Validates salary range before submission
    */
   static validateBeforeSave(
-    minimumSalary: string | number,
-    maximumSalary: string | number
+    minimumSalary: number | string | null,
+    maximumSalary: number | string | null
   ): boolean {
     return validateSalaryRange(minimumSalary, maximumSalary);
   }

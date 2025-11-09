@@ -38,14 +38,16 @@ export const validateDetails = (formState: CareerFormState): ValidationErrors =>
     errors.city = "This is a required field.";
   }
 
-  const minimum = String(formState.minimumSalary ?? "").trim();
-  if (!minimum) {
-    errors.minimumSalary = "This is a required field.";
-  }
-
-  const maximum = String(formState.maximumSalary ?? "").trim();
-  if (!maximum) {
-    errors.maximumSalary = "This is a required field.";
+  // Salary required only when not negotiable
+  if (!formState.salaryNegotiable) {
+    const minPresent = formState.minimumSalary !== null && formState.minimumSalary !== undefined;
+    const maxPresent = formState.maximumSalary !== null && formState.maximumSalary !== undefined;
+    if (!minPresent) {
+      errors.minimumSalary = "This is a required field.";
+    }
+    if (!maxPresent) {
+      errors.maximumSalary = "This is a required field.";
+    }
   }
 
   const descriptionText = stripHtml(formState.description || "");
@@ -57,8 +59,8 @@ export const validateDetails = (formState: CareerFormState): ValidationErrors =>
 };
 
 export const validateSalaryRange = (
-  minimumSalary: string | number,
-  maximumSalary: string | number
+  minimumSalary: number | string | null,
+  maximumSalary: number | string | null
 ): boolean => {
   const min = Number(minimumSalary);
   const max = Number(maximumSalary);

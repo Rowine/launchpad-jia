@@ -41,8 +41,8 @@ export interface CareerFormState {
   city: string;
   
   // Salary
-  minimumSalary: string | number;
-  maximumSalary: string | number;
+  minimumSalary: number | null;
+  maximumSalary: number | null;
   salaryNegotiable: boolean;
   
   // CV Screening
@@ -108,6 +108,11 @@ const DEFAULT_QUESTIONS: QuestionCategory[] = [
 ];
 
 function getInitialFormState(career?: any): CareerFormState {
+  const normalizeSalary = (value: any): number | null => {
+    if (value === null || value === undefined || value === "") return null;
+    const n = Number(value);
+    return isNaN(n) ? null : n;
+  };
   return {
     jobTitle: career?.jobTitle || "",
     description: career?.description || "",
@@ -120,8 +125,8 @@ function getInitialFormState(career?: any): CareerFormState {
     employmentType: career?.employmentType || "",
     requireVideo: career?.requireVideo ?? true,
     salaryNegotiable: career?.salaryNegotiable ?? true,
-    minimumSalary: career?.minimumSalary || "",
-    maximumSalary: career?.maximumSalary || "",
+    minimumSalary: normalizeSalary(career?.minimumSalary),
+    maximumSalary: normalizeSalary(career?.maximumSalary),
     questions: career?.questions || DEFAULT_QUESTIONS,
     country: career?.country || "Philippines",
     province: career?.province || "",
