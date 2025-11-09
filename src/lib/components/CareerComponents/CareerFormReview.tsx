@@ -132,7 +132,7 @@ export default function CareerFormReview({ summary }: Props) {
                             </div>
                             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                                 <span style={{ fontSize: 14, color: "#181D27", fontWeight: 700 }}>City</span>
-                                <span style={{ fontSize: 16, color: "#414651", fontWeight: 500 }}>{summary.location || summary.city || "Not specified"}</span>
+                                <span style={{ fontSize: 16, color: "#414651", fontWeight: 500 }}>{summary.city || "Not specified"}</span>
                             </div>
                         </div>
                         <div style={{ borderBottom: "2px solid #E9EAEB", width: "100%", padding: "12px 0" }}></div>

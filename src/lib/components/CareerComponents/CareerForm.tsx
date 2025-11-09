@@ -360,7 +360,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
       if (currentStep === 1) {
         setDetailsErrors({});
         setStepErrorIndex(null);
-        writeDraft({ jobTitle, description, employmentType, workSetup, country, province, location: city, salaryNegotiable, minimumSalary, maximumSalary }, orgID);
+        writeDraft({ jobTitle, description, employmentType, workSetup, country, province, city, salaryNegotiable, minimumSalary, maximumSalary }, orgID);
         goToStep(2);
       } else if (currentStep === 2) {
         setStepErrorIndex(null);
@@ -491,7 +491,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             )}
             {currentStep === 5 && (
               <CareerFormReview
-                summary={{ jobTitle, description, workSetup, workSetupRemarks, questions, preScreeningQuestions, cvScreeningSetting, aiInterviewScreeningSetting, cvSecretPrompt, aiInterviewSecretPrompt, requireVideo, salaryNegotiable, minimumSalary, maximumSalary, country, province, location: city, employmentType, orgID, teamMembers }}
+                summary={{ jobTitle, description, workSetup, workSetupRemarks, questions, preScreeningQuestions, cvScreeningSetting, aiInterviewScreeningSetting, cvSecretPrompt, aiInterviewSecretPrompt, requireVideo, salaryNegotiable, minimumSalary, maximumSalary, country, province, city, employmentType, orgID, teamMembers }}
               />
             )}
         </div>

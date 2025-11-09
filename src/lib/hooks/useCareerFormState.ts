@@ -235,7 +235,8 @@ export function useCareerFormState(career?: any, orgID?: string | null, user?: a
     if (typeof draft.maximumSalary !== "undefined") updates.maximumSalary = draft.maximumSalary;
     if (draft.country) updates.country = draft.country;
     if (draft.province) updates.province = draft.province;
-    if (draft.location) updates.city = draft.location;
+    if (draft.city) updates.city = draft.city;
+    else if (draft.location) updates.city = draft.location;
     if (draft.employmentType) updates.employmentType = draft.employmentType;
     if (Array.isArray(draft.teamMembers) && draft.teamMembers.length > 0) {
       updates.teamMembers = draft.teamMembers;
