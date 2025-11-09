@@ -462,6 +462,8 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                 screeningSettingList={SCREENING_SETTINGS}
                 cvSecretPrompt={cvSecretPrompt}
                 setCvSecretPrompt={(value) => updateField("cvSecretPrompt", value)}
+                preScreeningQuestions={formState.preScreeningQuestions}
+                setPreScreeningQuestions={(value) => updateField("preScreeningQuestions", value as any)}
               />
             )}
             {currentStep === 3 && (

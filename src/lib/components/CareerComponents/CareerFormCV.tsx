@@ -10,13 +10,13 @@ type Props = {
     screeningSettingList: { name: string; icon?: string }[];
     cvSecretPrompt: string;
     setCvSecretPrompt: (v: string) => void;
+    preScreeningQuestions: any[];
+    setPreScreeningQuestions: (q: any[]) => void;
 };
 
-export default function CareerFormCV({ jobTitle, screeningSetting, setScreeningSetting, screeningSettingList, cvSecretPrompt, setCvSecretPrompt }: Props) {
+export default function CareerFormCV({ jobTitle, screeningSetting, setScreeningSetting, screeningSettingList, cvSecretPrompt, setCvSecretPrompt, preScreeningQuestions, setPreScreeningQuestions }: Props) {
     const [showHelpTooltip, setShowHelpTooltip] = useState(false);
-    const [preScreeningQuestions, setPreScreeningQuestions] = useState<any[]>([]);
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
-    const [hasHydratedFromStorage, setHasHydratedFromStorage] = useState(false);
 
     const draftTitle = jobTitle?.trim() ? jobTitle : "Untitled Role";
 
@@ -43,40 +43,6 @@ export default function CareerFormCV({ jobTitle, screeningSetting, setScreeningS
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [openDropdownId]);
-
-    // LocalStorage persistence for preScreeningQuestions (keyed by jobTitle if provided)
-    const LOCAL_STORAGE_BASE_KEY = "careerFormCV_preScreeningQuestions";
-    const storageKey = jobTitle?.trim()
-        ? `${LOCAL_STORAGE_BASE_KEY}:${jobTitle.trim()}`
-        : LOCAL_STORAGE_BASE_KEY;
-
-    // Hydrate from localStorage when component mounts or jobTitle changes
-    useEffect(() => {
-        try {
-            const raw = localStorage.getItem(storageKey);
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                if (Array.isArray(parsed)) {
-                    setPreScreeningQuestions(parsed);
-                }
-            }
-        } catch {
-            // Ignore JSON parse errors or access issues
-        } finally {
-            setHasHydratedFromStorage(true);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [storageKey]);
-
-    // Persist to localStorage whenever questions change (after hydration)
-    useEffect(() => {
-        if (!hasHydratedFromStorage) return;
-        try {
-            localStorage.setItem(storageKey, JSON.stringify(preScreeningQuestions));
-        } catch {
-            // Ignore storage write errors (quota, privacy mode, etc.)
-        }
-    }, [preScreeningQuestions, storageKey, hasHydratedFromStorage]);
 
     const suggestedQuestions = [
         {
