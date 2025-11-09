@@ -15,6 +15,7 @@ export interface CareerPayload {
   workSetup: string;
   workSetupRemarks: string;
   questions: any[];
+  preScreeningQuestions?: any[];
   lastEditedBy: UserInfo;
   createdBy?: UserInfo;
   status: string;
@@ -72,6 +73,7 @@ export class CareerService {
       workSetup: formState.workSetup,
       workSetupRemarks: formState.workSetupRemarks,
       questions: formState.questions,
+      preScreeningQuestions: formState.preScreeningQuestions,
       lastEditedBy: userInfoSlice,
       status,
       cvScreeningSetting: formState.cvScreeningSetting,
