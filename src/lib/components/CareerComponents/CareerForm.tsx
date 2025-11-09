@@ -13,6 +13,7 @@ import philippineCitiesAndProvinces from "../../../../public/philippines-locatio
 import { candidateActionToast, errorToast } from "@/lib/Utils";
 import { useAppContext } from "@/lib/context/AppContext";
 import { CareerService } from "@/lib/utils/careerService";
+import { useRouter } from "next/navigation";
 import CareerActionModal from "./CareerActionModal";
 import FullScreenLoadingAnimation from "./FullScreenLoadingAnimation";
 import CareerFormTips from "./CareerFormTips";
@@ -35,6 +36,7 @@ type DetailsErrors = ValidationErrors;
 
 export default function CareerForm({ career, formType, setShowEditModal }: { career?: any, formType: string, setShowEditModal?: (show: boolean) => void }) {
     const { user, orgID } = useAppContext();
+    const router = useRouter();
     
     // Use the custom hook for form state management
     const {
@@ -281,7 +283,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                     <i className="la la-check-circle" style={{ color: "#039855", fontSize: 32 }}></i>
                 );
                 setTimeout(() => {
-                    window.location.href = `/recruiter-dashboard/careers/manage/${career._id}`;
+                    router.replace(`/recruiter-dashboard/careers/manage/${career._id}`);
                 }, 1300);
             }
         } catch (error) {
@@ -329,7 +331,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                         <i className="la la-check-circle" style={{ color: "#039855", fontSize: 32 }}></i>
                     );
                     setTimeout(() => {
-                        window.location.href = `/recruiter-dashboard/careers`;
+                        router.replace(`/recruiter-dashboard/careers`);
                     }, 1300);
                 }
             } catch (error) {
