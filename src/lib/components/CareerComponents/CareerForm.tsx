@@ -375,7 +375,11 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         goToStep(5);
       } else if (currentStep === 5) {
         setStepErrorIndex(null);
-        confirmSaveCareer("active");
+        if (formType === "edit" && career?._id) {
+          updateCareer("active");
+        } else {
+          confirmSaveCareer("active");
+        }
         clearDraft(orgID);
       }
     }
@@ -504,7 +508,13 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         )}
       </div>
       {showSaveModal && (
-         <CareerActionModal action={showSaveModal} onAction={(action) => saveCareer(action)} />
+         <CareerActionModal action={showSaveModal} onAction={(action) => {
+           if (formType === "edit" && career?._id) {
+             updateCareer(action);
+           } else {
+             saveCareer(action);
+           }
+         }} />
         )}
     {isSavingCareer && (
         <FullScreenLoadingAnimation title={formType === "add" ? "Saving career..." : "Updating career..."} subtext={`Please wait while we are ${formType === "add" ? "saving" : "updating"} the career`} />
