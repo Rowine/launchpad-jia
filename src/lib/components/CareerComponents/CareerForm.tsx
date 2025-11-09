@@ -111,36 +111,27 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     }>) => {
         const updates: Partial<typeof formState> = {};
         
-        if (typeof next.jobTitle !== "undefined") {
-            const value = (next.jobTitle as string) || "";
-            updates.jobTitle = value;
-            if (value.trim()) {
-                clearErrors("jobTitle");
+        // Helper to handle string fields
+        const handleStringField = (field: "jobTitle" | "employmentType" | "workSetup" | "country" | "city", value: string | undefined) => {
+            if (value !== undefined) {
+                const normalizedValue = value || "";
+                (updates as any)[field] = normalizedValue;
+                if (normalizedValue.trim()) {
+                    clearErrors(field as keyof DetailsErrors);
+                }
             }
-        }
-        if (typeof next.employmentType !== "undefined") {
-            const value = (next.employmentType as string) || "";
-            updates.employmentType = value;
-            if (value.trim()) {
-                clearErrors("employmentType");
-            }
-        }
-        if (typeof next.workSetup !== "undefined") {
-            const value = (next.workSetup as string) || "";
-            updates.workSetup = value;
-            if (value.trim()) {
-                clearErrors("workSetup");
-            }
-        }
-        if (typeof next.country !== "undefined") {
-            const value = (next.country as string) || "";
-            updates.country = value;
-            if (value.trim()) {
-                clearErrors("country");
-            }
-        }
-        if (typeof next.province !== "undefined") {
-            const provinceValue = (next.province as string) || "";
+        };
+
+        // Handle string fields
+        handleStringField("jobTitle", next.jobTitle);
+        handleStringField("employmentType", next.employmentType);
+        handleStringField("workSetup", next.workSetup);
+        handleStringField("country", next.country);
+        handleStringField("city", next.city);
+
+        // Handle province with special logic
+        if (next.province !== undefined) {
+            const provinceValue = next.province || "";
             updates.province = provinceValue;
             if (provinceValue.trim()) {
                 clearErrors("province");
@@ -152,28 +143,26 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                 }
             }
         }
-        if (typeof next.city !== "undefined") {
-            const value = (next.city as string) || "";
-            updates.city = value;
-            if (value.trim()) {
-                clearErrors("city");
-            }
-        }
-        if (typeof next.salaryNegotiable !== "undefined") {
+
+        // Handle salaryNegotiable
+        if (next.salaryNegotiable !== undefined) {
             updates.salaryNegotiable = !!next.salaryNegotiable;
             if (next.salaryNegotiable) {
                 clearErrors("minimumSalary", "maximumSalary");
             }
         }
-        if (typeof next.minimumSalary !== "undefined") {
-            updates.minimumSalary = next.minimumSalary as any;
+
+        // Handle salary fields
+        if (next.minimumSalary !== undefined) {
+            updates.minimumSalary = next.minimumSalary;
             const value = String(next.minimumSalary ?? "").trim();
             if (value) {
                 clearErrors("minimumSalary");
             }
         }
-        if (typeof next.maximumSalary !== "undefined") {
-            updates.maximumSalary = next.maximumSalary as any;
+
+        if (next.maximumSalary !== undefined) {
+            updates.maximumSalary = next.maximumSalary;
             const value = String(next.maximumSalary ?? "").trim();
             if (value) {
                 clearErrors("maximumSalary");
