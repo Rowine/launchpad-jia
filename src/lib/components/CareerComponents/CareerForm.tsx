@@ -414,6 +414,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px" }}>
                 <button
                  style={{ width: "fit-content", color: "#414651", background: "#fff", border: "1px solid #D5D7DA", padding: "8px 16px", borderRadius: "60px", cursor: "pointer", whiteSpace: "nowrap" }} onClick={() => {
+                  clearDraft(orgID);
                   setShowEditModal?.(false);
                     }}>
                         Cancel
