@@ -101,3 +101,55 @@ export const validateStep = (step: number, formState: CareerFormState): boolean 
   }
 };
 
+// Detailed per-step validation used by the wizard to drive UI errors
+export type StepValidationResult = {
+  valid: boolean;
+  errors?: ValidationErrors;
+  aiQuestionsError?: string;
+};
+
+export const validateStepResult = (step: number, formState: CareerFormState): StepValidationResult => {
+  switch (step) {
+    case 1: {
+      const errors = validateDetails(formState);
+      // Salary ordering validation when both are present
+      const min = Number(formState.minimumSalary);
+      const max = Number(formState.maximumSalary);
+      if (!!min && !!max && min > max) {
+        errors.minimumSalary = "Minimum salary cannot be greater than maximum salary.";
+        errors.maximumSalary = "Minimum salary cannot be greater than maximum salary.";
+      }
+      return { valid: Object.keys(errors).length === 0, errors };
+    }
+    case 2: {
+      // No required fields for CV section beyond what Step 1 enforced
+      return { valid: true };
+    }
+    case 3: {
+      const totalQuestions = formState.questions.reduce(
+        (acc, group) => acc + (Array.isArray(group.questions) ? group.questions.length : 0),
+        0
+      );
+      if (totalQuestions < 5) {
+        return { valid: false, aiQuestionsError: "Please add at least 5 interview questions." };
+      }
+      return { valid: true };
+    }
+    case 4: {
+      return { valid: true };
+    }
+    case 5: {
+      // Final check can reuse step 1 + step 3 core requirements
+      const step1 = validateStepResult(1, formState);
+      const step3 = validateStepResult(3, formState);
+      return {
+        valid: step1.valid && step3.valid,
+        errors: step1.errors,
+        aiQuestionsError: step3.aiQuestionsError,
+      };
+    }
+    default:
+      return { valid: false };
+  }
+};
+

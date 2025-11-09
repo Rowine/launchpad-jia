@@ -28,6 +28,7 @@ import {
   validateDetails,
   validateStep,
   stripHtml,
+  validateStepResult,
 } from "@/lib/utils/careerFormValidation";
 
 type DetailsErrors = ValidationErrors;
@@ -339,22 +340,15 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
       // Draft rehydration is now handled in useCareerFormState hook
 
     const handleSaveAndContinue = () => {
-      if (currentStep === 1) {
-        const validationErrors = validateDetails(formState);
-        setDetailsErrors(validationErrors);
-        if (Object.keys(validationErrors).length > 0) {
-          setStepErrorIndex(currentStep - 1);
-          return;
-        }
-      } else if (currentStep === 3) {
-        const totalQuestions = questions.reduce((acc, group) => acc + (Array.isArray(group.questions) ? group.questions.length : 0), 0);
-        if (totalQuestions < 5) {
-          setStepErrorIndex(currentStep - 1);
-          setAiQuestionsError("Please add at least 5 interview questions.");
-          return;
-        }
-      } else if (!isStepValid(currentStep)) {
+      const result = validateStepResult(currentStep, formState);
+      if (!result.valid) {
         setStepErrorIndex(currentStep - 1);
+        if (currentStep === 1 && result.errors) {
+          setDetailsErrors(result.errors);
+        }
+        if (currentStep === 3 && result.aiQuestionsError) {
+          setAiQuestionsError(result.aiQuestionsError);
+        }
         return;
       }
       if (currentStep === 1) {
