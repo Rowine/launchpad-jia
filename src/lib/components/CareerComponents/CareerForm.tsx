@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import CareerFormStepper from "@/lib/components/CareerComponents/CareerFormStepper";
 import CareerFormDetails from "@/lib/components/CareerComponents/CareerFormDetails";
 import CareerFormCV from "@/lib/components/CareerComponents/CareerFormCV";
@@ -182,12 +182,12 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         }
     };
 
-    const handleDescriptionChange = (text: string) => {
+    const handleDescriptionChange = useCallback((text: string) => {
         updateField("description", text);
         if (stripHtml(text || "")) {
             clearErrors("description");
         }
-    };
+    }, [updateField]);
 
     useEffect(() => {
         setProvinceList(philippineCitiesAndProvinces.provinces);
@@ -229,11 +229,11 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
   }
   
   // Go to step with safety check
-  const goToStep = (next: number) => {
+  const goToStep = useCallback((next: number) => {
     const safeStep = Math.min(Math.max(next, 1), 5);
     setCurrentStep(safeStep);
     setStepInUrl(safeStep);
-  };
+  }, []);
 
   // Clear AI questions error once requirement is satisfied
   useEffect(() => {

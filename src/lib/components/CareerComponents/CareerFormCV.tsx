@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import CustomDropdown from "@/lib/components/CareerComponents/CustomDropdown";
+import { CV_QUESTION_TYPES, CV_SUGGESTED_PRE_SCREENING_QUESTIONS } from "@/lib/utils/careerFormConstants";
 
 type Props = {
     jobTitle?: string;
@@ -20,13 +21,7 @@ export default function CareerFormCV({ jobTitle, screeningSetting, setScreeningS
 
     const draftTitle = jobTitle?.trim() ? jobTitle : "Untitled Role";
 
-    const questionTypes = [
-        { name: "Short Answer", icon: "la la-user" },
-        { name: "Long Answer", icon: "la la-bars" },
-        { name: "Dropdown", icon: "la la-chevron-circle-down" },
-        { name: "Checkboxes", icon: "la la-check-square" },
-        { name: "Range", icon: "la la-list-ol" },
-    ];
+    const questionTypes = CV_QUESTION_TYPES;
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -44,41 +39,18 @@ export default function CareerFormCV({ jobTitle, screeningSetting, setScreeningS
         };
     }, [openDropdownId]);
 
-    const suggestedQuestions = [
-        {
-            id: "notice-period",
-            title: "Notice Period",
-            question: "How long is your notice period?",
-            defaultOptions: ["Immediately", "< 30 days", "> 30 days"],
-        },
-        {
-            id: "work-setup",
-            title: "Work Setup",
-            question: "How often are you willing to report to the office?",
-            defaultOptions: [
-                "At most 1-2x a week",
-                "At most 3-4x a week",
-                "Open to fully onsite work",
-                "Only open to fully remote work",
-            ],
-        },
-        {
-            id: "asking-salary",
-            title: "Asking Salary",
-            question: "How much is your expected monthly salary?",
-            defaultOptions: [],
-        },
-    ];
+    const suggestedQuestions = CV_SUGGESTED_PRE_SCREENING_QUESTIONS;
 
-    const handleAddQuestion = (suggested: any) => {
+    const handleAddQuestion = useCallback((suggested: any) => {
         const isAskingSalary = suggested.id === "asking-salary";
+        const baseId = Date.now();
         const newQuestion = {
-            id: Date.now(),
+            id: baseId,
             suggestedId: suggested.id,
             question: suggested.question,
             type: isAskingSalary ? "Range" : "Dropdown",
             options: isAskingSalary ? [] : suggested.defaultOptions.map((opt: string, idx: number) => ({
-                id: Date.now() + idx,
+                id: baseId + idx + 1,
                 value: opt,
             })),
             ...(isAskingSalary && {
@@ -87,18 +59,17 @@ export default function CareerFormCV({ jobTitle, screeningSetting, setScreeningS
             }),
         };
         setPreScreeningQuestions([...preScreeningQuestions, newQuestion]);
-    };
+    }, [preScreeningQuestions, setPreScreeningQuestions]);
 
-    const handleDeleteQuestion = (questionId: number) => {
+    const handleDeleteQuestion = useCallback((questionId: number) => {
         setPreScreeningQuestions(preScreeningQuestions.filter((q) => q.id !== questionId));
-    };
+    }, [preScreeningQuestions, setPreScreeningQuestions]);
 
-    const handleUpdateQuestion = (questionId: number, field: string, value: any) => {
+    const handleUpdateQuestion = useCallback((questionId: number, field: string, value: any) => {
         setPreScreeningQuestions(
             preScreeningQuestions.map((q) => {
                 if (q.id === questionId) {
-                    const updated = { ...q, [field]: value };
-                    // Initialize range values if switching to Range type
+                    const updated: any = { ...q, [field]: value };
                     if (field === "type" && value === "Range" && !updated.minimumRange && !updated.maximumRange) {
                         updated.minimumRange = "";
                         updated.maximumRange = "";
@@ -108,54 +79,47 @@ export default function CareerFormCV({ jobTitle, screeningSetting, setScreeningS
                 return q;
             })
         );
-    };
+    }, [preScreeningQuestions, setPreScreeningQuestions]);
 
-    const handleUpdateRange = (questionId: number, field: "minimumRange" | "maximumRange", value: string) => {
+    const handleUpdateRange = useCallback((questionId: number, field: "minimumRange" | "maximumRange", value: string) => {
         setPreScreeningQuestions(
-            preScreeningQuestions.map((q) =>
-                q.id === questionId ? { ...q, [field]: value } : q
+            preScreeningQuestions.map((q) => (q.id === questionId ? { ...q, [field]: value } : q))
+        );
+    }, [preScreeningQuestions, setPreScreeningQuestions]);
+
+    const handleAddOption = useCallback((questionId: number) => {
+        const newId = Date.now();
+        setPreScreeningQuestions(
+            preScreeningQuestions.map((q: any) =>
+                q.id === questionId
+                    ? { ...q, options: [...(q.options || []), { id: newId, value: "" }] }
+                    : q
             )
         );
-    };
+    }, [preScreeningQuestions, setPreScreeningQuestions]);
 
-    const handleAddOption = (questionId: number) => {
+    const handleRemoveOption = useCallback((questionId: number, optionId: number) => {
         setPreScreeningQuestions(
-            preScreeningQuestions.map((q) =>
+            preScreeningQuestions.map((q: any) =>
+                q.id === questionId
+                    ? { ...q, options: (q.options || []).filter((opt: any) => opt.id !== optionId) }
+                    : q
+            )
+        );
+    }, [preScreeningQuestions, setPreScreeningQuestions]);
+
+    const handleUpdateOption = useCallback((questionId: number, optionId: number, value: string) => {
+        setPreScreeningQuestions(
+            preScreeningQuestions.map((q: any) =>
                 q.id === questionId
                     ? {
                           ...q,
-                          options: [...q.options, { id: Date.now(), value: "" }],
+                          options: (q.options || []).map((opt: any) => (opt.id === optionId ? { ...opt, value } : opt)),
                       }
                     : q
             )
         );
-    };
-
-    const handleRemoveOption = (questionId: number, optionId: number) => {
-        setPreScreeningQuestions(
-            preScreeningQuestions.map((q) =>
-                q.id === questionId
-                    ? {
-                          ...q,
-                          options: q.options.filter((opt: any) => opt.id !== optionId),
-                      }
-                    : q
-            )
-        );
-    };
-
-    const handleUpdateOption = (questionId: number, optionId: number, value: string) => {
-        setPreScreeningQuestions(
-            preScreeningQuestions.map((q) =>
-                q.id === questionId
-                    ? {
-                          ...q,
-                          options: q.options.map((opt: any) => (opt.id === optionId ? { ...opt, value } : opt)),
-                      }
-                    : q
-            )
-        );
-    };
+    }, [preScreeningQuestions, setPreScreeningQuestions]);
 
     const handleAddCustomQuestion = () => {
         const newQuestion = {
@@ -168,31 +132,16 @@ export default function CareerFormCV({ jobTitle, screeningSetting, setScreeningS
         setPreScreeningQuestions([...preScreeningQuestions, newQuestion]);
     };
 
-    const handleReorderQuestions = (
-        draggedQuestionId: number,
-        insertIndex: number
-    ) => {
+    const handleReorderQuestions = useCallback((draggedQuestionId: number, insertIndex: number) => {
         const updatedQuestions = [...preScreeningQuestions];
-        const draggedQuestionIndex = updatedQuestions.findIndex(
-            (q) => q.id === draggedQuestionId
-        );
-
+        const draggedQuestionIndex = updatedQuestions.findIndex((q: any) => q.id === draggedQuestionId);
         if (draggedQuestionIndex === -1) return;
-
         const questionToMove = updatedQuestions[draggedQuestionIndex];
-        
-        // Remove the dragged question first
         updatedQuestions.splice(draggedQuestionIndex, 1);
-        
-        // Adjust insert index if dragging from a lower index to a higher index
-        const adjustedInsertIndex = draggedQuestionIndex < insertIndex 
-            ? insertIndex - 1 
-            : insertIndex;
-        
+        const adjustedInsertIndex = draggedQuestionIndex < insertIndex ? insertIndex - 1 : insertIndex;
         updatedQuestions.splice(adjustedInsertIndex, 0, questionToMove);
-
         setPreScreeningQuestions(updatedQuestions);
-    };
+    }, [preScreeningQuestions, setPreScreeningQuestions]);
 
     const isQuestionAdded = (suggestedId: string) => {
         return preScreeningQuestions.some((q) => q.suggestedId === suggestedId);
