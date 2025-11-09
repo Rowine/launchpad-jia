@@ -23,18 +23,14 @@ import {
   TEAM_ROLE_OPTIONS,
   COUNTRY_OPTIONS,
 } from "@/lib/utils/careerFormConstants";
+import {
+  ValidationErrors,
+  validateDetails,
+  validateStep,
+  stripHtml,
+} from "@/lib/utils/careerFormValidation";
 
-type DetailsErrors = {
-    jobTitle?: string;
-    employmentType?: string;
-    workSetup?: string;
-    country?: string;
-    province?: string;
-    city?: string;
-    minimumSalary?: string;
-    maximumSalary?: string;
-    description?: string;
-};
+type DetailsErrors = ValidationErrors;
 
 export default function CareerForm({ career, formType, setShowEditModal }: { career?: any, formType: string, setShowEditModal?: (show: boolean) => void }) {
     const { user, orgID } = useAppContext();
@@ -99,29 +95,6 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             });
             return next;
         });
-    };
-
-    const stripHtml = (value: string) => value?.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").trim();
-
-    const validateDetails = (): DetailsErrors => {
-        const errors: DetailsErrors = {};
-        if (!jobTitle?.trim()) errors.jobTitle = "This is a required field.";
-        if (!employmentType?.trim()) errors.employmentType = "This is a required field.";
-        if (!workSetup?.trim()) errors.workSetup = "This is a required field.";
-        if (!country?.trim()) errors.country = "This is a required field.";
-        if (!province?.trim()) errors.province = "This is a required field.";
-        if (!city?.trim()) errors.city = "This is a required field.";
-
-        const minimum = String(minimumSalary ?? "").trim();
-        if (!minimum) errors.minimumSalary = "This is a required field.";
-
-        const maximum = String(maximumSalary ?? "").trim();
-        if (!maximum) errors.maximumSalary = "This is a required field.";
-
-        const descriptionText = stripHtml(description || "");
-        if (!descriptionText) errors.description = "This is a required field.";
-
-        return errors;
     };
 
     /* Remove errors from fields when changing details */
@@ -251,28 +224,11 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         }
     }, [province, provinceList, city, setCityList, updateField]);
 
-    const isFormValid = () => {
-        return jobTitle?.trim().length > 0 && description?.trim().length > 0 && workSetup?.trim().length > 0;
-    }
-
   // Step handling
   const [currentStep, setCurrentStep] = useState<number>(() => (typeof window !== "undefined" ? getStepFromUrl(1) : 1));
 
   const isStepValid = (step: number) => {
-      switch (step) {
-          case 1:
-              return jobTitle?.trim().length > 0 && description?.trim().length > 0 && workSetup?.trim().length > 0 && employmentType?.trim().length > 0 && (!Number(minimumSalary) || !Number(maximumSalary) || Number(minimumSalary) <= Number(maximumSalary));
-          case 2:
-              return description?.trim().length > 0;
-          case 3:
-              return questions.reduce((acc, group) => acc + (Array.isArray(group.questions) ? group.questions.length : 0), 0) >= 5;
-          case 4:
-              return true;
-          case 5:
-              return isFormValid();
-          default:
-              return false;
-      }
+      return validateStep(step, formState);
   }
   
   // Go to step with safety check
@@ -436,7 +392,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
 
     const handleSaveAndContinue = () => {
       if (currentStep === 1) {
-        const validationErrors = validateDetails();
+        const validationErrors = validateDetails(formState);
         setDetailsErrors(validationErrors);
         if (Object.keys(validationErrors).length > 0) {
           setStepErrorIndex(currentStep - 1);
