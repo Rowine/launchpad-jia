@@ -283,6 +283,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                     <i className="la la-check-circle" style={{ color: "#039855", fontSize: 32 }}></i>
                 );
                 setTimeout(() => {
+                    clearDraft(orgID);
                     router.replace(`/recruiter-dashboard/careers/manage/${career._id}`);
                 }, 1300);
             }
@@ -331,6 +332,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                         <i className="la la-check-circle" style={{ color: "#039855", fontSize: 32 }}></i>
                     );
                     setTimeout(() => {
+                        clearDraft(orgID);
                         router.replace(`/recruiter-dashboard/careers`);
                     }, 1300);
                 }
