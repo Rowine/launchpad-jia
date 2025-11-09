@@ -127,7 +127,7 @@ export default function CareerFormReview({ summary }: Props) {
                         <div style={{ borderBottom: "2px solid #E9EAEB", width: "100%", padding: "12px 0" }}></div>
                         </div>
 
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
                             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                                 <span style={{ fontSize: 14, color: "#181D27", fontWeight: 700 }}>Employment Type</span>
                                 <span style={{ fontSize: 16, color: "#414651", fontWeight: 500 }}>{summary.employmentType || "Not specified"}</span>
