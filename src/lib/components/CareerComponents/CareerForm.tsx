@@ -66,6 +66,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         minimumSalary,
         maximumSalary,
         questions,
+        preScreeningQuestions,
         country,
         province,
         city,
@@ -363,7 +364,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         goToStep(2);
       } else if (currentStep === 2) {
         setStepErrorIndex(null);
-        writeDraft({ cvScreeningSetting, cvSecretPrompt }, orgID);
+        writeDraft({ cvScreeningSetting, cvSecretPrompt, preScreeningQuestions }, orgID);
         goToStep(3);
       } else if (currentStep === 3) {
         setStepErrorIndex(null);

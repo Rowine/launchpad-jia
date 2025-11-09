@@ -17,6 +17,16 @@ export interface TeamMember {
   isYou?: boolean;
 }
 
+export interface PreScreeningQuestion {
+  id: number;
+  suggestedId: string | null;
+  question: string;
+  type: "Short Answer" | "Long Answer" | "Dropdown" | "Checkboxes" | "Range";
+  options?: { id: number; value: string }[];
+  minimumRange?: string;
+  maximumRange?: string;
+}
+
 export interface CareerFormState {
   // Basic Information
   jobTitle: string;
@@ -47,6 +57,9 @@ export interface CareerFormState {
   
   // Team
   teamMembers: TeamMember[];
+
+  // CV pre-screening questions (Step 2)
+  preScreeningQuestions: PreScreeningQuestion[];
 }
 
 export interface CareerFormUIState {
@@ -114,6 +127,7 @@ function getInitialFormState(career?: any): CareerFormState {
     province: career?.province || "",
     city: career?.location || "",
     teamMembers: [],
+    preScreeningQuestions: Array.isArray(career?.preScreeningQuestions) ? career.preScreeningQuestions : [],
   };
 }
 
@@ -222,6 +236,7 @@ export function useCareerFormState(career?: any, orgID?: string | null, user?: a
       updates.teamMembers = draft.teamMembers;
     }
     if (Array.isArray(draft.questions)) updates.questions = draft.questions;
+    if (Array.isArray(draft.preScreeningQuestions)) updates.preScreeningQuestions = draft.preScreeningQuestions;
 
     if (Object.keys(updates).length > 0) {
       setFormState((prev) => ({ ...prev, ...updates }));
