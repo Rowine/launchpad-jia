@@ -7,7 +7,8 @@ import CareerFormCV from "@/lib/components/CareerComponents/CareerFormCV";
 import CareerFormAI from "@/lib/components/CareerComponents/CareerFormAI";
 import CareerFormPipeline from "@/lib/components/CareerComponents/CareerFormPipeline";
 import CareerFormReview from "@/lib/components/CareerComponents/CareerFormReview";
-import { getStepFromUrl, setStepInUrl, readDraft, writeDraft, clearDraft } from "@/lib/hooks/useCareerFormSteps";
+import { getStepFromUrl, setStepInUrl, writeDraft, clearDraft } from "@/lib/hooks/useCareerFormSteps";
+import { useCareerFormState } from "@/lib/hooks/useCareerFormState";
 import philippineCitiesAndProvinces from "../../../../public/philippines-locations.json";
 import { candidateActionToast, errorToast } from "@/lib/Utils";
 import { useAppContext } from "@/lib/context/AppContext";
@@ -15,54 +16,13 @@ import axios from "axios";
 import CareerActionModal from "./CareerActionModal";
 import FullScreenLoadingAnimation from "./FullScreenLoadingAnimation";
 import CareerFormTips from "./CareerFormTips";
-  // Setting List icons
-  const screeningSettingList = [
-    {
-        name: "Good Fit and above",
-        icon: "la la-check",
-    },
-    {
-        name: "Only Strong Fit",
-        icon: "la la-check-double",
-    },
-    {
-        name: "No Automatic Promotion",
-        icon: "la la-times",
-    },
-];
-const workSetupOptions = [
-    {
-        name: "Fully Remote",
-    },
-    {
-        name: "Onsite",
-    },
-    {
-        name: "Hybrid",
-    },
-];
-
-const employmentTypeOptions = [
-    {
-        name: "Full-Time",
-    },
-    {
-        name: "Part-Time",
-    },
-];
-
-const teamRoleOptions = [
-    { name: "Job Owner" },
-    { name: "Hiring Manager" },
-    { name: "Recruiter" },
-    { name: "Viewer" },
-];
-
-const countryOptions = [
-    {
-        name: "Philippines",
-    },
-];
+import {
+  SCREENING_SETTINGS,
+  WORK_SETUP_OPTIONS,
+  EMPLOYMENT_TYPE_OPTIONS,
+  TEAM_ROLE_OPTIONS,
+  COUNTRY_OPTIONS,
+} from "@/lib/utils/careerFormConstants";
 
 type DetailsErrors = {
     jobTitle?: string;
@@ -78,63 +38,55 @@ type DetailsErrors = {
 
 export default function CareerForm({ career, formType, setShowEditModal }: { career?: any, formType: string, setShowEditModal?: (show: boolean) => void }) {
     const { user, orgID } = useAppContext();
-    const [jobTitle, setJobTitle] = useState(career?.jobTitle || "");
-    const [description, setDescription] = useState(career?.description || "");
-    const [workSetup, setWorkSetup] = useState(career?.workSetup || "");
-    const [workSetupRemarks, setWorkSetupRemarks] = useState(career?.workSetupRemarks || "");
-    const [cvScreeningSetting, setCvScreeningSetting] = useState(career?.cvScreeningSetting || career?.screeningSetting || "Good Fit and above");
-    const [aiInterviewScreeningSetting, setAiInterviewScreeningSetting] = useState(career?.aiInterviewScreeningSetting || career?.screeningSetting || "Good Fit and above");
-    const [cvSecretPrompt, setCvSecretPrompt] = useState(career?.cvSecretPrompt || "");
-    const [aiInterviewSecretPrompt, setAiInterviewSecretPrompt] = useState(career?.aiInterviewSecretPrompt || "");
-    const [employmentType, setEmploymentType] = useState(career?.employmentType || "");
-    const [requireVideo, setRequireVideo] = useState(career?.requireVideo || true);
-    const [salaryNegotiable, setSalaryNegotiable] = useState(career?.salaryNegotiable || true);
-    const [minimumSalary, setMinimumSalary] = useState(career?.minimumSalary || "");
-    const [maximumSalary, setMaximumSalary] = useState(career?.maximumSalary || "");
-    const [questions, setQuestions] = useState(career?.questions || [
-      {
-        id: 1,
-        category: "CV Validation / Experience",
-        questionCountToAsk: null,
-        questions: [],
-      },
-      {
-        id: 2,
-        category: "Technical",
-        questionCountToAsk: null,
-        questions: [],
-      },
-      {
-        id: 3,
-        category: "Behavioral",
-        questionCountToAsk: null,
-        questions: [],
-      },
-      {
-        id: 4,
-        category: "Analytical",
-        questionCountToAsk: null,
-        questions: [],
-      },
-      {
-        id: 5,
-        category: "Others",
-        questionCountToAsk: null,
-        questions: [],
-      },
-    ]);
-    const [country, setCountry] = useState(career?.country || "Philippines");
-    const [province, setProvince] = useState(career?.province ||"");
-    const [city, setCity] = useState(career?.location || "");
-    const [teamMembers, setTeamMembers] = useState<any[]>([]);
-    const [provinceList, setProvinceList] = useState([]);
-    const [cityList, setCityList] = useState([]);
-    const [showSaveModal, setShowSaveModal] = useState("");
-    const [isSavingCareer, setIsSavingCareer] = useState(false);
+    
+    // Use the custom hook for form state management
+    const {
+        formState,
+        updateField,
+        updateFields,
+        uiState,
+        setShowSaveModal,
+        setIsSavingCareer,
+        setAiQuestionsError,
+        setStepErrorIndex,
+        locationData,
+        setProvinceList,
+        setCityList,
+    } = useCareerFormState(career, orgID, user);
+
+    // Destructure formState for easier access
+    const {
+        jobTitle,
+        description,
+        workSetup,
+        workSetupRemarks,
+        cvScreeningSetting,
+        aiInterviewScreeningSetting,
+        cvSecretPrompt,
+        aiInterviewSecretPrompt,
+        employmentType,
+        requireVideo,
+        salaryNegotiable,
+        minimumSalary,
+        maximumSalary,
+        questions,
+        country,
+        province,
+        city,
+        teamMembers,
+    } = formState;
+
+    const {
+        showSaveModal,
+        isSavingCareer,
+        aiQuestionsError,
+        stepErrorIndex,
+    } = uiState;
+
+    const { provinceList, cityList } = locationData;
+
     const savingCareerRef = useRef(false);
-    const [aiQuestionsError, setAiQuestionsError] = useState("");
     const [detailsErrors, setDetailsErrors] = useState<DetailsErrors>({});
-    const [stepErrorIndex, setStepErrorIndex] = useState<number | null>(null);
 
     const clearErrors = (...fields: (keyof DetailsErrors)[]) => {
         setDetailsErrors((prev) => {
@@ -184,78 +136,84 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
         minimumSalary: string | number | null;
         maximumSalary: string | number | null;
     }>) => {
+        const updates: Partial<typeof formState> = {};
+        
         if (typeof next.jobTitle !== "undefined") {
             const value = (next.jobTitle as string) || "";
-            setJobTitle(value);
+            updates.jobTitle = value;
             if (value.trim()) {
                 clearErrors("jobTitle");
             }
         }
         if (typeof next.employmentType !== "undefined") {
             const value = (next.employmentType as string) || "";
-            setEmploymentType(value);
+            updates.employmentType = value;
             if (value.trim()) {
                 clearErrors("employmentType");
             }
         }
         if (typeof next.workSetup !== "undefined") {
             const value = (next.workSetup as string) || "";
-            setWorkSetup(value);
+            updates.workSetup = value;
             if (value.trim()) {
                 clearErrors("workSetup");
             }
         }
         if (typeof next.country !== "undefined") {
             const value = (next.country as string) || "";
-            setCountry(value);
+            updates.country = value;
             if (value.trim()) {
                 clearErrors("country");
             }
         }
         if (typeof next.province !== "undefined") {
             const provinceValue = (next.province as string) || "";
-            setProvince(provinceValue);
+            updates.province = provinceValue;
             if (provinceValue.trim()) {
                 clearErrors("province");
             }
             if (!provinceValue.trim()) {
                 setCityList([]);
                 if (city) {
-                    setCity("");
+                    updates.city = "";
                 }
             }
         }
         if (typeof next.city !== "undefined") {
             const value = (next.city as string) || "";
-            setCity(value);
+            updates.city = value;
             if (value.trim()) {
                 clearErrors("city");
             }
         }
         if (typeof next.salaryNegotiable !== "undefined") {
-            setSalaryNegotiable(!!next.salaryNegotiable);
+            updates.salaryNegotiable = !!next.salaryNegotiable;
             if (next.salaryNegotiable) {
                 clearErrors("minimumSalary", "maximumSalary");
             }
         }
         if (typeof next.minimumSalary !== "undefined") {
-            setMinimumSalary(next.minimumSalary as any);
+            updates.minimumSalary = next.minimumSalary as any;
             const value = String(next.minimumSalary ?? "").trim();
             if (value) {
                 clearErrors("minimumSalary");
             }
         }
         if (typeof next.maximumSalary !== "undefined") {
-            setMaximumSalary(next.maximumSalary as any);
+            updates.maximumSalary = next.maximumSalary as any;
             const value = String(next.maximumSalary ?? "").trim();
             if (value) {
                 clearErrors("maximumSalary");
             }
         }
+
+        if (Object.keys(updates).length > 0) {
+            updateFields(updates);
+        }
     };
 
     const handleDescriptionChange = (text: string) => {
-        setDescription(text);
+        updateField("description", text);
         if (stripHtml(text || "")) {
             clearErrors("description");
         }
@@ -263,13 +221,13 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
 
     useEffect(() => {
         setProvinceList(philippineCitiesAndProvinces.provinces);
-    }, []);
+    }, [setProvinceList]);
 
     useEffect(() => {
         if (Object.keys(detailsErrors).length === 0) {
             setStepErrorIndex(null);
         }
-    }, [detailsErrors]);
+    }, [detailsErrors, setStepErrorIndex]);
 
     useEffect(() => {
         if (!provinceList.length) {
@@ -283,15 +241,15 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
 
             const cityInList = cities.some((c: any) => c.name === city);
             if (!cityInList && city) {
-                setCity("");
+                updateField("city", "");
             }
         } else {
             setCityList([]);
             if (city) {
-                setCity("");
+                updateField("city", "");
             }
         }
-    }, [province, provinceList, city]);
+    }, [province, provinceList, city, setCityList, updateField]);
 
     const isFormValid = () => {
         return jobTitle?.trim().length > 0 && description?.trim().length > 0 && workSetup?.trim().length > 0;
@@ -330,7 +288,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     if (totalQuestions >= 5 && aiQuestionsError) {
       setAiQuestionsError("");
     }
-  }, [questions, aiQuestionsError]);
+  }, [questions, aiQuestionsError, setAiQuestionsError]);
 
   useEffect(() => {
     const updateStepFromUrl = () => {
@@ -474,46 +432,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
       }
     }
 
-      useEffect(() => {
-        // Rehydrate from draft
-        const draft = readDraft(orgID);
-        if (draft) {
-          if (draft.jobTitle) setJobTitle(draft.jobTitle);
-          if (draft.description) setDescription(draft.description);
-          if (draft.workSetup) setWorkSetup(draft.workSetup);
-          if (typeof draft.workSetupRemarks !== "undefined") setWorkSetupRemarks(draft.workSetupRemarks);
-          if (draft.cvScreeningSetting) setCvScreeningSetting(draft.cvScreeningSetting);
-          if (draft.aiInterviewScreeningSetting) setAiInterviewScreeningSetting(draft.aiInterviewScreeningSetting);
-          // Backwards compatibility
-          if (draft.screeningSetting && !draft.cvScreeningSetting && !draft.aiInterviewScreeningSetting) {
-            setCvScreeningSetting(draft.screeningSetting);
-            setAiInterviewScreeningSetting(draft.screeningSetting);
-          }
-          if (draft.cvSecretPrompt) setCvSecretPrompt(draft.cvSecretPrompt);
-          if (draft.aiInterviewSecretPrompt) setAiInterviewSecretPrompt(draft.aiInterviewSecretPrompt);
-          if (typeof draft.requireVideo !== "undefined") setRequireVideo(draft.requireVideo);
-          if (typeof draft.salaryNegotiable !== "undefined") setSalaryNegotiable(draft.salaryNegotiable);
-          if (typeof draft.minimumSalary !== "undefined") setMinimumSalary(draft.minimumSalary);
-          if (typeof draft.maximumSalary !== "undefined") setMaximumSalary(draft.maximumSalary);
-          if (draft.country) setCountry(draft.country);
-          if (draft.province) setProvince(draft.province);
-          if (draft.location) setCity(draft.location);
-          if (draft.employmentType) setEmploymentType(draft.employmentType);
-          if (Array.isArray(draft.teamMembers) && draft.teamMembers.length > 0) setTeamMembers(draft.teamMembers);
-          if (Array.isArray(draft.questions)) setQuestions(draft.questions);
-        }
-        if (user && teamMembers.length === 0) {
-          setTeamMembers([
-            {
-              name: user.name,
-              email: user.email,
-              image: user.image,
-              role: "Job Owner",
-              isYou: true,
-            },
-          ]);
-        }
-      }, [user]);
+      // Draft rehydration is now handled in useCareerFormState hook
 
     const handleSaveAndContinue = () => {
       if (currentStep === 1) {
@@ -614,16 +533,16 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
               <CareerFormDetails
                 value={{ jobTitle, employmentType, workSetup, country, province, city, salaryNegotiable, minimumSalary, maximumSalary }}
                 onChange={handleDetailsChange}
-                employmentTypeOptions={employmentTypeOptions}
-                workSetupOptions={workSetupOptions}
-                countryOptions={countryOptions}
+                employmentTypeOptions={EMPLOYMENT_TYPE_OPTIONS}
+                workSetupOptions={WORK_SETUP_OPTIONS}
+                countryOptions={COUNTRY_OPTIONS}
                 provinceList={provinceList}
                 cityList={cityList}
                 description={description}
                 setDescription={handleDescriptionChange}
                 teamMembers={teamMembers}
-                setTeamMembers={setTeamMembers}
-                teamRoleOptions={teamRoleOptions}
+                setTeamMembers={(value) => updateField("teamMembers", value)}
+                teamRoleOptions={TEAM_ROLE_OPTIONS}
                 errors={detailsErrors}
               />
             )}
@@ -631,33 +550,33 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
               <CareerFormCV
                 jobTitle={jobTitle}
                 screeningSetting={cvScreeningSetting}
-                setScreeningSetting={setCvScreeningSetting}
-                screeningSettingList={screeningSettingList}
+                setScreeningSetting={(value) => updateField("cvScreeningSetting", value)}
+                screeningSettingList={SCREENING_SETTINGS}
                 cvSecretPrompt={cvSecretPrompt}
-                setCvSecretPrompt={setCvSecretPrompt}
+                setCvSecretPrompt={(value) => updateField("cvSecretPrompt", value)}
               />
             )}
             {currentStep === 3 && (
               <CareerFormAI
                 questions={questions}
-                setQuestions={setQuestions}
+                setQuestions={(value) => updateField("questions", value)}
                 requireVideo={requireVideo}
-                setRequireVideo={setRequireVideo}
+                setRequireVideo={(value) => updateField("requireVideo", value)}
                 screeningSetting={aiInterviewScreeningSetting}
-                setScreeningSetting={setAiInterviewScreeningSetting}
-                screeningSettingList={screeningSettingList}
+                setScreeningSetting={(value) => updateField("aiInterviewScreeningSetting", value)}
+                screeningSettingList={SCREENING_SETTINGS}
                 jobTitle={jobTitle}
                 description={description}
                 aiQuestionsError={aiQuestionsError}
                 aiInterviewSecretPrompt={aiInterviewSecretPrompt}
-                setAiInterviewSecretPrompt={setAiInterviewSecretPrompt}
+                setAiInterviewSecretPrompt={(value) => updateField("aiInterviewSecretPrompt", value)}
               />
             )}
             {currentStep === 4 && (
               <CareerFormPipeline
                 teamMembers={teamMembers}
-                setTeamMembers={setTeamMembers}
-                teamRoleOptions={teamRoleOptions}
+                setTeamMembers={(value) => updateField("teamMembers", value as typeof formState.teamMembers)}
+                teamRoleOptions={TEAM_ROLE_OPTIONS}
               />
             )}
             {currentStep === 5 && (
