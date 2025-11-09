@@ -12,7 +12,7 @@ import { useCareerFormState } from "@/lib/hooks/useCareerFormState";
 import philippineCitiesAndProvinces from "../../../../public/philippines-locations.json";
 import { candidateActionToast, errorToast } from "@/lib/Utils";
 import { useAppContext } from "@/lib/context/AppContext";
-import axios from "axios";
+import { CareerService } from "@/lib/utils/careerService";
 import CareerActionModal from "./CareerActionModal";
 import FullScreenLoadingAnimation from "./FullScreenLoadingAnimation";
 import CareerFormTips from "./CareerFormTips";
@@ -251,49 +251,29 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     
 
     const updateCareer = async (status: string) => {
-        if (Number(minimumSalary) && Number(maximumSalary) && Number(minimumSalary) > Number(maximumSalary)) {
+        if (!CareerService.validateBeforeSave(minimumSalary, maximumSalary)) {
             errorToast("Minimum salary cannot be greater than maximum salary", 1300);
             return;
         }
-        let userInfoSlice = {
-            image: user.image,
-            name: user.name,
-            email: user.email,
-        };
-        const updatedCareer = {
-            _id: career._id,
-            jobTitle,
-            description,
-            workSetup,
-            workSetupRemarks,
-            questions,
-            lastEditedBy: userInfoSlice,
-            status,
-            updatedAt: Date.now(),
-            cvScreeningSetting,
-            aiInterviewScreeningSetting,
-            cvSecretPrompt,
-            aiInterviewSecretPrompt,
-            requireVideo,
-            salaryNegotiable,
-            minimumSalary: isNaN(Number(minimumSalary)) ? null : Number(minimumSalary),
-            maximumSalary: isNaN(Number(maximumSalary)) ? null : Number(maximumSalary),
-            country,
-            province,
-            // Backwards compatibility
-            location: city,
-            employmentType,
-        }
+
         try {
             setIsSavingCareer(true);
-            const response = await axios.post("/api/update-career", updatedCareer);
-            if (response.status === 200) {
+            const payload = CareerService.buildCareerPayload(
+                formState,
+                user,
+                orgID,
+                status,
+                career._id
+            );
+            const response = await CareerService.updateCareer(payload);
+            if (response) {
                 candidateActionToast(
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8, marginLeft: 8 }}>
                         <span style={{ fontSize: 14, fontWeight: 700, color: "#181D27" }}>Career updated</span>
                     </div>,
                     1300,
-                <i className="la la-check-circle" style={{ color: "#039855", fontSize: 32 }}></i>)
+                    <i className="la la-check-circle" style={{ color: "#039855", fontSize: 32 }}></i>
+                );
                 setTimeout(() => {
                     window.location.href = `/recruiter-dashboard/careers/manage/${career._id}`;
                 }, 1300);
@@ -308,9 +288,9 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
 
   
     const confirmSaveCareer = (status: string) => {
-        if (Number(minimumSalary) && Number(maximumSalary) && Number(minimumSalary) > Number(maximumSalary)) {
-        errorToast("Minimum salary cannot be greater than maximum salary", 1300);
-        return;
+        if (!CareerService.validateBeforeSave(minimumSalary, maximumSalary)) {
+            errorToast("Minimum salary cannot be greater than maximum salary", 1300);
+            return;
         }
 
         setShowSaveModal(status);
@@ -319,62 +299,40 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
     const saveCareer = async (status: string) => {
         setShowSaveModal("");
         if (!status) {
-          return;
+            return;
         }
 
         if (!savingCareerRef.current) {
-        setIsSavingCareer(true);
-        savingCareerRef.current = true;
-        let userInfoSlice = {
-            image: user.image,
-            name: user.name,
-            email: user.email,
-        };
-        const career = {
-            jobTitle,
-            description,
-            workSetup,
-            workSetupRemarks,
-            questions,
-            lastEditedBy: userInfoSlice,
-            createdBy: userInfoSlice,
-            cvScreeningSetting,
-            aiInterviewScreeningSetting,
-            cvSecretPrompt,
-            orgID,
-            requireVideo,
-            salaryNegotiable,
-            minimumSalary: isNaN(Number(minimumSalary)) ? null : Number(minimumSalary),
-            maximumSalary: isNaN(Number(maximumSalary)) ? null : Number(maximumSalary),
-            country,
-            province,
-            // Backwards compatibility
-            location: city,
-            status,
-            employmentType,
-        }
+            setIsSavingCareer(true);
+            savingCareerRef.current = true;
 
-        try {
-            
-            const response = await axios.post("/api/add-career", career);
-            if (response.status === 200) {
-            candidateActionToast(
-                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8, marginLeft: 8 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: "#181D27" }}>Career added {status === "active" ? "and published" : ""}</span>
-                </div>,
-                1300, 
-            <i className="la la-check-circle" style={{ color: "#039855", fontSize: 32 }}></i>)
-            setTimeout(() => {
-                window.location.href = `/recruiter-dashboard/careers`;
-            }, 1300);
+            try {
+                const payload = CareerService.buildCareerPayload(
+                    formState,
+                    user,
+                    orgID,
+                    status
+                );
+                const response = await CareerService.createCareer(payload);
+                if (response) {
+                    candidateActionToast(
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8, marginLeft: 8 }}>
+                            <span style={{ fontSize: 14, fontWeight: 700, color: "#181D27" }}>Career added {status === "active" ? "and published" : ""}</span>
+                        </div>,
+                        1300,
+                        <i className="la la-check-circle" style={{ color: "#039855", fontSize: 32 }}></i>
+                    );
+                    setTimeout(() => {
+                        window.location.href = `/recruiter-dashboard/careers`;
+                    }, 1300);
+                }
+            } catch (error) {
+                errorToast("Failed to add career", 1300);
+            } finally {
+                savingCareerRef.current = false;
+                setIsSavingCareer(false);
             }
-        } catch (error) {
-            errorToast("Failed to add career", 1300);
-        } finally {
-            savingCareerRef.current = false;
-            setIsSavingCareer(false);
         }
-      }
     }
 
       // Draft rehydration is now handled in useCareerFormState hook
