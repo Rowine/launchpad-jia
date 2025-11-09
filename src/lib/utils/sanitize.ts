@@ -193,3 +193,43 @@ export function sanitizeQuestions(questions: any): any[] {
   });
 }
 
+/**
+ * Validates and sanitizes pre-screening questions array (CV form)
+ */
+export function sanitizePreScreeningQuestions(items: any): any[] {
+  if (!items) return [];
+  if (!Array.isArray(items)) {
+    throw new Error("Pre-screening questions must be an array");
+  }
+  if (items.length > 100) {
+    throw new Error("Too many pre-screening questions");
+  }
+  return items.map((item: any, index: number) => {
+    if (!item || typeof item !== "object") {
+      throw new Error(`Invalid pre-screening question at index ${index}`);
+    }
+    const sanitized: any = {
+      id: validateNumber(item.id) || index + 1,
+      suggestedId: item.suggestedId ? sanitizeString(item.suggestedId, 200) : null,
+      question: sanitizeString(item.question || "", 1000),
+      type: sanitizeString(item.type || "Dropdown", 100),
+    };
+
+    if (sanitized.type === "Range") {
+      sanitized.minimumRange = sanitizeString(item.minimumRange ?? "", 100);
+      sanitized.maximumRange = sanitizeString(item.maximumRange ?? "", 100);
+    } else {
+      const options = Array.isArray(item.options) ? item.options : [];
+      if (options.length > 50) {
+        throw new Error(`Too many options in pre-screening question at index ${index}`);
+      }
+      sanitized.options = options.map((opt: any, optIndex: number) => ({
+        id: validateNumber(opt?.id) || optIndex + 1,
+        value: sanitizeString(opt?.value || "", 500),
+      }));
+    }
+
+    return sanitized;
+  });
+}
+

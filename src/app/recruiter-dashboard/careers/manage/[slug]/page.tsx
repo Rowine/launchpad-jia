@@ -285,6 +285,12 @@ export default function ManageCareerPage() {
                     lastEditedBy: response.data?.lastEditedBy || {},
                     employmentType: response.data?.employmentType || "Full-time",
                     orgID: response.data?.orgID || "",
+                    // Fields required by edit modal CareerForm
+                    cvScreeningSetting: response.data?.cvScreeningSetting || response.data?.screeningSetting || "",
+                    aiInterviewScreeningSetting: response.data?.aiInterviewScreeningSetting || response.data?.screeningSetting || "",
+                    cvSecretPrompt: response.data?.cvSecretPrompt || "",
+                    aiInterviewSecretPrompt: response.data?.aiInterviewSecretPrompt || "",
+                    preScreeningQuestions: Array.isArray(response.data?.preScreeningQuestions) ? response.data?.preScreeningQuestions : [],
                 });
                 if (tab === "edit") {
                     setActiveTab("job-description");

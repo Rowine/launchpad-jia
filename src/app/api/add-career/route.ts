@@ -11,6 +11,7 @@ import {
   validateEnum,
   sanitizeUserInfo,
   sanitizeQuestions,
+  sanitizePreScreeningQuestions,
 } from "@/lib/utils/sanitize";
 
 // Allowed values for enums
@@ -76,6 +77,7 @@ export async function POST(request: Request) {
 
     // Validate and sanitize optional fields
     let questions;
+    let preScreeningQuestions;
     try {
       questions = requestData.questions ? sanitizeQuestions(requestData.questions) : [];
       if (questions.length === 0) {
@@ -84,6 +86,7 @@ export async function POST(request: Request) {
           { status: 400 }
         );
       }
+      preScreeningQuestions = requestData.preScreeningQuestions ? sanitizePreScreeningQuestions(requestData.preScreeningQuestions) : [];
     } catch (error: any) {
       return NextResponse.json(
         { error: error.message || "Invalid questions data" },
@@ -214,6 +217,7 @@ export async function POST(request: Request) {
       aiInterviewScreeningSetting,
       cvSecretPrompt,
       aiInterviewSecretPrompt,
+      preScreeningQuestions,
       orgID,
       requireVideo,
       lastActivityAt: new Date(),
