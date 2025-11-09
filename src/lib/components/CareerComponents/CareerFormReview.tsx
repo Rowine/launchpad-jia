@@ -26,7 +26,7 @@ export default function CareerFormReview({ summary }: Props) {
     const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
     const [isCvExpanded, setIsCvExpanded] = useState(true);
     const [isAiInterviewExpanded, setIsAiInterviewExpanded] = useState(true);
-    const [preScreeningQuestions, setPreScreeningQuestions] = useState<any[]>([]);
+    const preScreeningQuestions: any[] = Array.isArray(summary?.preScreeningQuestions) ? summary.preScreeningQuestions : [];
 
     // Flatten all AI interview questions from all categories
     const aiInterviewQuestions = React.useMemo(() => {
@@ -41,25 +41,7 @@ export default function CareerFormReview({ summary }: Props) {
         return aiInterviewQuestions.length;
     }, [aiInterviewQuestions]);
 
-    // Read pre-screening questions from localStorage
-    React.useEffect(() => {
-        const LOCAL_STORAGE_BASE_KEY = "careerFormCV_preScreeningQuestions";
-        const storageKey = summary.jobTitle?.trim()
-            ? `${LOCAL_STORAGE_BASE_KEY}:${summary.jobTitle.trim()}`
-            : LOCAL_STORAGE_BASE_KEY;
-        
-        try {
-            const raw = localStorage.getItem(storageKey);
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                if (Array.isArray(parsed)) {
-                    setPreScreeningQuestions(parsed);
-                }
-            }
-        } catch {
-            // Ignore errors
-        }
-    }, [summary.jobTitle]);
+    // preScreeningQuestions are provided via summary; no localStorage reads
 
     const formatSecretPrompt = (prompt: string): string[] => {
         if (!prompt || !prompt.trim()) return [];
