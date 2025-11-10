@@ -443,7 +443,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
                 onStepClick={(stepIndex) => goToStep(stepIndex + 1)}
             />
         </div>
-        <div style={{ display: "flex", flexDirection: "row", justifyContent: currentStep === 5 ? "center" : "space-between", width: "100%", gap: 16, alignItems: "flex-start", marginTop: 16 }}>
+        <div style={{ display: "flex", flexDirection: "row", justifyContent: currentStep === 5 ? "center" : "space-between", width: "100%", gap: 16, alignItems: "flex-start", marginTop: 16, marginBottom: 16 }}>
         <div style={{ width: currentStep === 5 ? "90%" : "70%", maxWidth: currentStep === 5 ? "1400px" : "none", display: "flex", flexDirection: "column", gap: 8 }}>
             {currentStep === 1 && (
               <CareerFormDetails
