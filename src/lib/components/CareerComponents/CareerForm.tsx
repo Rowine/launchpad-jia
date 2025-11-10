@@ -500,6 +500,7 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
             {currentStep === 5 && (
               <CareerFormReview
                 summary={{ jobTitle, description, workSetup, workSetupRemarks, questions, preScreeningQuestions, cvScreeningSetting, aiInterviewScreeningSetting, cvSecretPrompt, aiInterviewSecretPrompt, requireVideo, salaryNegotiable, minimumSalary, maximumSalary, country, province, city, employmentType, orgID, teamMembers }}
+                onEditStep={goToStep}
               />
             )}
         </div>

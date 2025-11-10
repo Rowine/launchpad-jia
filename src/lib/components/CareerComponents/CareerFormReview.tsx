@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 type Props = {
     summary: any;
-    // Review is passive; actions handled in header
+    onEditStep?: (step: number) => void;
 };
 
 const formatSalary = (salary: number | null | undefined, isNegotiable: boolean): string => {
@@ -22,7 +22,7 @@ const formatSalary = (salary: number | null | undefined, isNegotiable: boolean):
     }).format(salary).replace('PHP', '').trim();
 };
 
-export default function CareerFormReview({ summary }: Props) {
+export default function CareerFormReview({ summary, onEditStep }: Props) {
     const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
     const [isCvExpanded, setIsCvExpanded] = useState(true);
     const [isAiInterviewExpanded, setIsAiInterviewExpanded] = useState(true);
@@ -97,7 +97,9 @@ export default function CareerFormReview({ summary }: Props) {
                         style={{ fontSize: 16, color: "#181D27", cursor: "pointer" }}
                         onClick={(e) => {
                             e.stopPropagation();
-                            // Edit functionality can be added here
+                            if (onEditStep) {
+                                onEditStep(1);
+                            }
                         }}
                     ></i>
                 </div>
@@ -238,7 +240,9 @@ export default function CareerFormReview({ summary }: Props) {
                         style={{ fontSize: 16, color: "#181D27", cursor: "pointer" }}
                         onClick={(e) => {
                             e.stopPropagation();
-                            // Edit functionality can be added here
+                            if (onEditStep) {
+                                onEditStep(2);
+                            }
                         }}
                     ></i>
                 </div>
@@ -397,7 +401,9 @@ export default function CareerFormReview({ summary }: Props) {
                         style={{ fontSize: 16, color: "#181D27", cursor: "pointer" }}
                         onClick={(e) => {
                             e.stopPropagation();
-                            // Edit functionality can be added here
+                            if (onEditStep) {
+                                onEditStep(3);
+                            }
                         }}
                     ></i>
                 </div>
