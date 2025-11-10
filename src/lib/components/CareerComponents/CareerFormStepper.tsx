@@ -7,6 +7,7 @@ type CareerFormStepperProps = {
     currentStep: number; // 0-based index
     progressEnabled?: boolean; // controls whether progress gradient is shown
     errorStepIndex?: number | null;
+    onStepClick?: (stepIndex: number) => void;
 };
 
 const DEFAULT_STEPS = [
@@ -17,8 +18,15 @@ const DEFAULT_STEPS = [
     "Review Career",
 ];
 
-export default function CareerFormStepper({ steps = DEFAULT_STEPS, currentStep, progressEnabled = true, errorStepIndex = null }: CareerFormStepperProps) {
+export default function CareerFormStepper({ steps = DEFAULT_STEPS, currentStep, progressEnabled = true, errorStepIndex = null, onStepClick }: CareerFormStepperProps) {
     const safeCurrent = Math.min(Math.max(currentStep, 0), steps.length - 1);
+
+    const handleStepClick = (index: number) => {
+        const isCompleted = index < safeCurrent;
+        if (isCompleted && onStepClick) {
+            onStepClick(index);
+        }
+    };
 
     return (
         <div style={{ width: "100%", padding: "8px 0 8px 0" }}>
@@ -28,6 +36,7 @@ export default function CareerFormStepper({ steps = DEFAULT_STEPS, currentStep, 
                     const isActive = index === safeCurrent;
                     const isCompleted = index < safeCurrent;
                     const hasError = errorStepIndex === index;
+                    const isClickable = isCompleted && onStepClick;
                     const align = index === 0 ? "flex-start" : "flex-start"
                     return (
                         <div key={`step-${index}`} style={{ display: "flex", flexDirection: "column", alignItems: index === 0 ? "flex-start" : index === steps.length - 1 ? "flex-start" : "center", marginRight: 12 }}>
@@ -45,7 +54,9 @@ export default function CareerFormStepper({ steps = DEFAULT_STEPS, currentStep, 
                                         <i className="la la-exclamation-triangle" style={{ fontSize: 24, color: "#F04438" }}></i>
                                     </div>
                                 ) : isCompleted ? (
-                                    <div
+                                    <button
+                                        type="button"
+                                        onClick={() => handleStepClick(index)}
                                         style={{
                                             width: 20,
                                             height: 20,
@@ -55,10 +66,21 @@ export default function CareerFormStepper({ steps = DEFAULT_STEPS, currentStep, 
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "center",
+                                            cursor: isClickable ? "pointer" : "default",
+                                            padding: 0,
+                                            transition: "transform 0.2s ease",
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (isClickable) {
+                                                e.currentTarget.style.transform = "scale(1.1)";
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = "scale(1)";
                                         }}
                                     >
                                         <i className="la la-check" style={{ fontSize: 10, color: "#FFFFFF" }}></i>
-                                    </div>
+                                    </button>
                                 ) : (
                                     <i className="la la-dot-circle" style={{ fontSize: 24, color: isActive ? "#000000" : "#D5D7DA" }}></i>
                                 )}

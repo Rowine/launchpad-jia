@@ -436,7 +436,12 @@ export default function CareerForm({ career, formType, setShowEditModal }: { car
        </div>
         )}
         <div style={{ marginTop: 4, marginBottom: 12 }}>
-            <CareerFormStepper currentStep={currentStep - 1} progressEnabled={isStepValid(currentStep)} errorStepIndex={stepErrorIndex} />
+            <CareerFormStepper 
+                currentStep={currentStep - 1} 
+                progressEnabled={isStepValid(currentStep)} 
+                errorStepIndex={stepErrorIndex}
+                onStepClick={(stepIndex) => goToStep(stepIndex + 1)}
+            />
         </div>
         <div style={{ display: "flex", flexDirection: "row", justifyContent: currentStep === 5 ? "center" : "space-between", width: "100%", gap: 16, alignItems: "flex-start", marginTop: 16 }}>
         <div style={{ width: currentStep === 5 ? "90%" : "70%", maxWidth: currentStep === 5 ? "1400px" : "none", display: "flex", flexDirection: "column", gap: 8 }}>
