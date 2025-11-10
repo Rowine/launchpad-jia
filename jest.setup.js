@@ -1,6 +1,11 @@
 // Mock environment variables
 process.env.NODE_ENV = 'test'
 
+// Polyfills for Node.js environment (needed for MongoDB and other packages)
+const { TextEncoder, TextDecoder } = require('util')
+global.TextEncoder = TextEncoder
+global.TextDecoder = TextDecoder
+
 // Mock Next.js modules
 jest.mock('next/server', () => ({
   NextResponse: {
@@ -10,4 +15,7 @@ jest.mock('next/server', () => ({
     })),
   },
 }))
+
+// Setup testing library
+require('@testing-library/jest-dom')
 
