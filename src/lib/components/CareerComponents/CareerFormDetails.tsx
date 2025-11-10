@@ -183,6 +183,7 @@ export default function CareerFormDetails(props: Props) {
                                     min={0}
                                     value={String(value.minimumSalary ?? "")}
                                     onChange={(e) => onChange({ minimumSalary: e.target.value || "" })}
+                                    disabled={value.salaryNegotiable}
                                 />
                                 <span style={{ position: "absolute", right: 30, top: "50%", transform: "translateY(-50%)", color: "#6c757d", fontSize: 16, pointerEvents: "none", fontWeight: 500 }}>PHP</span>
                             </div>
@@ -205,6 +206,7 @@ export default function CareerFormDetails(props: Props) {
                                     min={0}
                                     value={String(value.maximumSalary ?? "")}
                                     onChange={(e) => onChange({ maximumSalary: e.target.value || "" })}
+                                    disabled={value.salaryNegotiable}
                                 />
                                 <span style={{ position: "absolute", right: 30, top: "50%", transform: "translateY(-50%)", color: "#6c757d", fontSize: 16, pointerEvents: "none", fontWeight: 500 }}>PHP</span>
                             </div>
